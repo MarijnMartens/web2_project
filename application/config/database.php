@@ -48,8 +48,9 @@
 $active_group = 'default';
 $active_record = TRUE;
 
+//nog aan te passen
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = '';
+$db['default']['username'] = 'root';
 $db['default']['password'] = '';
 $db['default']['database'] = '';
 $db['default']['dbdriver'] = 'mysql';
