@@ -19,8 +19,23 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$this->load->view('welcome_message');
+            $headerData = ['title' => 'manueel #1'];
+            $this->load->view('tmpHeader_view', $headerData);
+            
+            $this->load->view('index_view');
+            
+            $this->load->view('tmpFooter_view');
 	}
+        
+        public function info()
+        {
+            $headerData = ['title' => 'manueel #2'];
+            $this->load->view('tmpHeader_view', $headerData);
+            
+            $this->load->view('info_view');
+            
+            $this->load->view('tmpFooter_view'); 
+        }
 }
 
 /* End of file welcome.php */

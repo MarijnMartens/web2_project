@@ -14,10 +14,16 @@
 | path to your installation.
 |
 */
-if ($_SERVER['HTTP_POST'] !="localhost")
+
+/*
+if ($_SERVER['HTTP_POST'] !="localhost"){
     $config['base_url'] = 'http://www.marijnmartens.be';
-else
-    $config['base_url']	= 'http://localhost/project_web2/';
+} else {
+    $config['base_url']	= 'http://localhost/project_web2';
+}
+*/
+
+$config['base_url'] = 'http://localhost/project_web2/index.php/';
 
 /*
 |--------------------------------------------------------------------------
