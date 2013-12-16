@@ -50,9 +50,9 @@ $active_record = TRUE;
 
 //nog aan te passen
 $db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'root';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
+$db['default']['username'] = 'knolselder';
+$db['default']['password'] = 'hwaY9KpHfpbcWunT';
+$db['default']['database'] = 'project_web2';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;
