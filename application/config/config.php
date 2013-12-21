@@ -23,7 +23,7 @@ if ($_SERVER['HTTP_POST'] !="localhost"){
 }
 */
 
-$config['base_url'] = 'http://localhost/project_web2/index.php/';
+$config['base_url'] = 'http://localhost/project_web2/index.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +35,7 @@ $config['base_url'] = 'http://localhost/project_web2/index.php/';
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
