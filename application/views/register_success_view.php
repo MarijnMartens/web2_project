@@ -6,9 +6,9 @@
     </head>
     <body>
 
-        <h3>Your form was successfully submitted!</h3>
+        <p><?php echo $gelukt; ?></p>
 
-        <p><?php echo anchor('form', 'Try it again!'); ?></p>
+        <p><?php echo anchor('register', 'Try it again!'); ?></p>
 
 
     </body>

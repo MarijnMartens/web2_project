@@ -8,10 +8,7 @@ and open the template in the editor.
     Author     : Marijn
 */
 
-body{
-    background-color:lime;
-}
-
-h1 {
+.error{
     color: red;
+    font-weight: bold;
 }

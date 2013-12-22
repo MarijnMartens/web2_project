@@ -1,35 +1,27 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Register User Page</title>
-    </head>
-    <body>
-       <?php echo validation_errors(); ?>
-
-<?php echo form_open('form'); ?>
-
-<h5>Username</h5>
-<?php echo form_error('username'); ?>
-<input type="text" name="username" value="<?php echo set_value('username'); ?>" size="50" />
-
-<h5>Password</h5>
-<?php echo form_error('password'); ?>
-<input type="text" name="password" value="<?php echo set_value('password'); ?>" size="50" />
-
-<h5>Password Confirm</h5>
-<?php echo form_error('passconf'); ?>
-<input type="text" name="passconf" value="<?php echo set_value('passconf'); ?>" size="50" />
-
-<h5>Email Address</h5>
-<?php echo form_error('email'); ?>
-<input type="text" name="email" value="<?php echo set_value('email'); ?>" size="50" />
-
-
-<div><input type="submit" value="Submit" /></div>
-
-<?php echo form_close(); ?>
-
-
-    </body>
-</html>
+        <?php echo form_open('register'); ?>
+        <p>
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Username" value="<?php echo set_value('username'); ?>" size="20" />
+        <?php echo form_error('username'); ?>
+        </p>
+        
+        <p>
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Password" value="<?php echo set_value('password'); ?>" size="20" />
+        <?php echo form_error('password'); ?>
+        </p>
+        
+        <p>
+        <label>Confirm Password</label>
+        <input type="password" name="passconf" placeholder="Password" value="<?php echo set_value('passconf'); ?>" size="20" />
+        <?php echo form_error('passconf'); ?>
+        </p>
+        
+        <p>
+        <label>Email Address</label>
+        <input type="text" name="email" placeholder="Email" value="<?php echo set_value('email'); ?>" size="30" />
+        <?php echo form_error('email'); ?>
+        </p>
+        
+        <input type="submit" value="Submit" />
+        <?php echo form_close(); ?>
