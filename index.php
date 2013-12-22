@@ -3,7 +3,8 @@
 //Change #2
 //Change #3
 //Change #4
-/*dd
+//Change #5
+/*Laurens Pouders
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
  *---------------------------------------------------------------
@@ -59,7 +60,7 @@ if (defined('ENVIRONMENT'))
  * as this file.
  *
  */
-	$system_path = 'system';
+	$system_path = 'system'
 
 /*
  *---------------------------------------------------------------
