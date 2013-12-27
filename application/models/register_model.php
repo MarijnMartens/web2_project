@@ -8,8 +8,25 @@ class Register_model extends CI_Model
     
     function setUsers($username, $password, $email)
     {
-        $data = array('username' => $username, 'password' => $password, 'email' => $email);
+        //encrypting crypt, auto salt met cost
+        $option = ['cost' => 12];
+        $password = password_hash($password, PASSWORD_DEFAULT, $option);
+        
+        $data = array(
+            'username' => $username,
+            'password' => $password,
+            'email' => $email
+                );
+        
+        //insert user
         $this->db->insert('users', $data);
-        return $this->db->affected_rows();
+        $query = $this->db->affected_rows();
+        
+        if ($query == 1)
+        {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 }

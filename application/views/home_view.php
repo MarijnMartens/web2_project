@@ -5,11 +5,7 @@
         <title></title>
     </head>
     <body>
-
-        <p><?php echo $gelukt; ?></p>
-
-        <p><?php echo anchor('register', 'Try it again!'); ?></p>
-
-
+        <h2>Welcome <?php echo $username; ?></h2>
+        <a href="user/logout">Logout</a>
     </body>
 </html>
