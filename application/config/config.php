@@ -17,7 +17,7 @@
 
 
 if ($_SERVER['HTTP_HOST'] !="localhost"){
-    $config['base_url'] = 'http://marijnmartens.azurewebsites.net/index.php';
+    $config['base_url'] = 'http://marijnmartens.azurewebsites.net';
 } else {
     $config['base_url']	= 'http://localhost/project_web2/index.php';
 }
@@ -31,7 +31,7 @@ if ($_SERVER['HTTP_HOST'] !="localhost"){
 | variable so that it is blank.
 |
 */
-$config['index_page'] = '';
+$config['index_page'] = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
