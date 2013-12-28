@@ -1,7 +1,7 @@
 <?php
     /*@*/ require_once ('db_data.php');
     $connectionString=DB::getConnectionString();
-
+echo 'begin';
     try{
         $pdo=new PDO($connectionString, DB::USERNAME, DB::PASSWORD);
         $pdo-> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -87,7 +87,7 @@
         $count = $pdo->exec("DELETE FROM werknemers WHERE voornaam='pipi'");;
         echo $count;
         */
-        
+        echo 'einde';
     }
     catch(PDOException $e)
     {
@@ -95,6 +95,10 @@
         echo $e->getMessage()."\n\n".$e->getTraceAsString();
         echo "</pre>";*/
         echo $e->getMessage();
+    }
+    catch (Exception $ex)
+    {
+        echo $ex->getTraceAsString();
     }
     finally //Wil netbeans precies niet herkennen
     {
