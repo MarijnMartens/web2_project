@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl"> <!-- van belang voor de twitter timeline -->
     <head>
         <meta charset="UTF-8">
         <title><?PHP echo $title; ?></title>
