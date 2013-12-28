@@ -12,3 +12,6 @@
 <input type='submit' value='Login' />            
 <?php //echo form_close(); WERKT NIET ?>
 </form>
+<form action='<?php echo base_url();?>login/password_forgot' method="post" name="password">
+    <input type="submit" value="Forgot password?"/>
+</form>

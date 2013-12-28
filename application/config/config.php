@@ -15,16 +15,12 @@
 |
 */
 
-/*
+
 if ($_SERVER['HTTP_POST'] !="localhost"){
-    $config['base_url'] = 'http://www.marijnmartens.be';
+    $config['base_url'] = 'http://marijnmartens.azurewebsites.net/index.php';
 } else {
-    $config['base_url']	= 'http://localhost/project_web2';
+    $config['base_url']	= 'http://localhost/project_web2/index.php';
 }
-*/
-
-$config['base_url'] = 'http://localhost/project_web2/index.php';
-
 /*
 |--------------------------------------------------------------------------
 | Index File

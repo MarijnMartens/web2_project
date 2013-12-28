@@ -48,11 +48,18 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-//nog aan te passen
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'knolselder';
-$db['default']['password'] = 'hwaY9KpHfpbcWunT';
-$db['default']['database'] = 'project_web2';
+if ($_SERVER['HTTP_POST'] !="localhost"){
+    $db['default']['hostname'] = 'eu-cdbr-azure-west-b.cloudapp.net';
+    $db['default']['username'] = 'b638e6ea6511d6';
+    $db['default']['password'] = 'ebd8654c';
+    $db['default']['database'] = 'cdb_f8188f18d4';
+} else {
+    $db['default']['hostname'] = 'localhost';
+    $db['default']['username'] = 'knolselder';
+    $db['default']['password'] = 'hwaY9KpHfpbcWunT';
+    $db['default']['database'] = 'project_web2';
+}
+
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

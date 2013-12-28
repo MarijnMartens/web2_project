@@ -107,6 +107,38 @@ class Login extends CI_Controller {
     }
 
     //wachtwoord vergeten
+    public function password_forgot($error = NULL){
+        $headerData = ['title' => 'Request new password'];
+        $bodyData['error'] = $error;
+        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('passwordReset_view', $bodyData);
+        $this->load->view('tmpFooter_view');
+    }
+    
+    public function password_reset(){
+        // grab user input
+        $username = $this->security->xss_clean($this->input->post('username'));
+        $email = $this->security->xss_clean($this->input->post('email'));
+        // Load the model
+        $this->load->model('password_model');
+        // Validate the user has correct username and email
+        $result = $this->password_model->reset($username, $email);
+        // Now we verify the result
+        if (!$result) {
+            // If user did not validate, then show them login page again
+            $error = 'Invalid username and/or email.';
+            $this->password_forgot($error);
+        } else {
+            // If user did validate, 
+            // Send them email
+            $this->load->library('email');
+            $this->email->from('do-not-reply@marijnmartens.be', 'Hexion.be');
+            $this->email->to($email);
+            $this->email->subject('Hexion Forgot Password');
+            $this->email->message('Hello ' . $username . ', <br/> Your new password is <b>' . $result . '</b>.');
+            $this->email->send();
+            echo $result;
+            $this->index($error = '<span style="color:blue;">Een E-mail werd naar ' . $email . ' verzonden.</span>');
+        }
+    }
 }
-?>
-
