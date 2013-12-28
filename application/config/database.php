@@ -48,7 +48,7 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-if ($_SERVER['HTTP_POST'] !="localhost"){
+if ($_SERVER['HTTP_HOST'] !="localhost"){
     $db['default']['hostname'] = 'eu-cdbr-azure-west-b.cloudapp.net';
     $db['default']['username'] = 'b638e6ea6511d6';
     $db['default']['password'] = 'ebd8654c';

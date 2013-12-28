@@ -16,7 +16,7 @@
 */
 
 
-if ($_SERVER['HTTP_POST'] !="localhost"){
+if ($_SERVER['HTTP_HOST'] !="localhost"){
     $config['base_url'] = 'http://marijnmartens.azurewebsites.net/index.php';
 } else {
     $config['base_url']	= 'http://localhost/project_web2/index.php';
