@@ -31,7 +31,7 @@ if ($_SERVER['HTTP_HOST'] !="localhost"){
 | variable so that it is blank.
 |
 */
-$config['index_page'] = 'index.php';
+$config['index_page'] = '';
 
 /*
 |--------------------------------------------------------------------------
