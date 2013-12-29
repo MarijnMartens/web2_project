@@ -11,10 +11,6 @@ if (!defined('BASEPATH'))
 
 class Reply_model extends CI_Model {
 
-    function __construct() {
-        parent::__construct();
-    }
-
     public function getReplies($topic_id) {
         $this->db->select('reply.*, user.username');
         $this->db->from('reply');

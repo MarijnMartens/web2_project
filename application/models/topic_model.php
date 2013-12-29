@@ -15,7 +15,7 @@ class Topic_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-
+    //return list of topics
     public function getTopics($forum_id) {
         $this->db->select('topic.*, user.username');
         $this->db->from('topic');
@@ -26,7 +26,7 @@ class Topic_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
-
+    //return count of topics
     public function getCount($forum_id) {
         $this->db->select('count(*) as count');
         $this->db->from('topic');
@@ -34,7 +34,8 @@ class Topic_model extends CI_Model {
         $query = $this->db->get();
         return $query->row()->count;
     }
-
+    //return list of topic id's from on forum, 
+    //used for reply counter in forum
     public function getId($forum_id) {
         $this->db->select('id');
         $this->db->from('topic');

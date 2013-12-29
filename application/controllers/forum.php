@@ -14,7 +14,7 @@ if (!defined('BASEPATH'))
 class Forum extends CI_Controller {
 
     //Constructor to load models, this way you do not have to do it for each function
-    function __construct() {
+    public function __construct() {
         parent::__construct();
         $this->load->model('forum_model');
         $this->load->model('topic_model');
@@ -30,6 +30,7 @@ class Forum extends CI_Controller {
         //Print each section, done this way for counters; #topics, #replies (in all underlying topics combined)
         foreach ($result as $row) {
             $forum_id = $row->id;
+
             //Rows to print to userscreen
             $result = (
                     '<tr>' .
@@ -39,20 +40,17 @@ class Forum extends CI_Controller {
                     '<td>' . $this->countRepliesForum($forum_id) . ' Replies</td>' .
                     '</tr>'
                     );
+            //Put each row in array
             $data[] = $result;
         }
+        //Send array to view
         $bodyData['forums'] = $data;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-
-    public function countTopics($forum_id) {
-        $count = $this->topic_model->getCount($forum_id);
-        return $count;
-    }
-
-    public function countRepliesForum($forum_id) {
+    //Function for index to count all replies from all sub-topics
+    private function countRepliesForum($forum_id) {
         $result = $this->topic_model->getId($forum_id);
 
         $count = 0;
@@ -61,16 +59,21 @@ class Forum extends CI_Controller {
         }
         return $count;
     }
-
-    public function countReplies($topic_id) {
+    //count all topics
+    private function countTopics($forum_id) {
+        $count = $this->topic_model->getCount($forum_id);
+        return $count;
+    }
+    //count all replies in one topic
+    private function countReplies($topic_id) {
         $result = $this->reply_model->getCount($topic_id);
         return $result;
     }
-
+    //display list of topics, more or less like function 'index'
     public function topics($forum_id) {
         $headerData = ['title' => 'Topics'];
         $result = $this->topic_model->getTopics($forum_id);
-
+        //print each topic
         foreach ($result as $row) {
             $topic_id = $row->id;
             $result = (
@@ -91,7 +94,7 @@ class Forum extends CI_Controller {
         $this->load->view('topic_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-
+    //display list of replies in one topic
     public function replies($topic_id) {
         $headerData = ['title' => 'Replies'];
         $result = $this->reply_model->getReplies($topic_id);
