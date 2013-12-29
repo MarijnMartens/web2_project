@@ -20,3 +20,8 @@ body {
 header, footer {
     background-color:yellow;
 }
+
+/*header{
+    background-image: url('../images/logo.png');
+    background-repeat: no-repeat;
+}*/

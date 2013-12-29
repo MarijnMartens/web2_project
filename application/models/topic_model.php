@@ -26,5 +26,21 @@ class Topic_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
-
+    
+    public function getAantal($forum_id){
+        $this->db->select('count(*) as count');
+        $this->db->from('topic');
+        $this->db->where('topic.forum_id', $forum_id);
+        $query = $this->db->get();
+        return $query->row()->count;
+    }
+    
+    public function getId($forum_id){
+        $this->db->select('id');
+        $this->db->from('topic');
+        $this->db->where('forum_id', $forum_id);
+        $query = $this->db->get();
+        return $query->result();
+    }
+    
 }
