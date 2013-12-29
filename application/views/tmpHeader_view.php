@@ -24,7 +24,7 @@
 
             <ul id="menu">
                 <li><a href="<?php echo base_url('welcome/index'); ?>">Home</a></li>
-                <li>Forum</li>
+                <li><a href="<?php echo base_url('forum/index'); ?>">Forum</a></li>
                 <li>Events</li>
                 <li><a href="<?php echo base_url('welcome/info'); ?>">Info</a></li>
                 <li>Contact</li>
