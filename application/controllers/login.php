@@ -54,7 +54,7 @@ class Login extends CI_Controller {
                 . 'min_length[3]|'
                 . 'max_length[20]|'
                 . 'callback_register_username_check|'
-                . 'is_unique[users.username]'
+                . 'is_unique[user.username]'
         );
         $this->form_validation->set_rules(
                 'password', 'Password', 'required|'
@@ -67,7 +67,7 @@ class Login extends CI_Controller {
         $this->form_validation->set_rules(
                 'email', 'Email', 'required|'
                 . 'valid_email|'
-                . 'is_unique[users.email]'
+                . 'is_unique[user.email]'
         );
 
         //Aangepaste melding

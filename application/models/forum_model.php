@@ -11,11 +11,7 @@ if (!defined('BASEPATH'))
 
 class Forum_model extends CI_Model {
 
-    function __construct() {
-        parent::__construct();
-    }
-
-    public function getFora() {
+    public function getForums() {
         $this->db->select('*');
         $this->db->from('forum');
         $this->db->order_by('id');

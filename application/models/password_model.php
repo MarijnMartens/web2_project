@@ -23,7 +23,7 @@ class Password_model extends CI_Model {
         $passwordEncrypted = password_hash($password, PASSWORD_DEFAULT, $option);
         $data = array('password' => $passwordEncrypted);
         
-        $this->db->update('users', $data);
+        $this->db->update('user', $data);
         // Let's check if there are any results
         if ($this->db->affected_rows() == 1) {
          return $password;

@@ -19,7 +19,7 @@ class Register_model extends CI_Model
                 );
         
         //insert user
-        $this->db->insert('users', $data);
+        $this->db->insert('user', $data);
         $query = $this->db->affected_rows();
         
         if ($query == 1)

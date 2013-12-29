@@ -1,10 +1,9 @@
-<p>FORUM</p>
+<h1>Topics</h1>
 <table border='1'>
-        <?php echo "Aantal topics $aantal"; ?>
-    <?PHP 
-        foreach($topics as $topic)
-        {
-            echo $topic;
-        }
+    <?php echo "$count Topics"; ?>
+    <?PHP
+    foreach ($topics as $topic) {
+        echo $topic;
+    }
     ?>
 </table>

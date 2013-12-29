@@ -1,9 +1,11 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Author: Marijn Martens
+ * Created on: 29/12/2013
+ * Last modified on: 
+ * 
+ * References: none
  */
 
 if (!defined('BASEPATH'))
@@ -11,99 +13,95 @@ if (!defined('BASEPATH'))
 
 class Forum extends CI_Controller {
 
+    //Constructor to load models, this way you do not have to do it for each function
     function __construct() {
         parent::__construct();
+        $this->load->model('forum_model');
+        $this->load->model('topic_model');
+        $this->load->model('reply_model');
     }
 
+    //Main Forum - Lists different sections: Guests (i.e. FAQ, Guestbook) / Users / Hexioners / Admins
     public function index() {
         $headerData = ['title' => 'Forum'];
+        //Get all sections from database
+        $result = $this->forum_model->getForums();
 
-        $this->load->model('forum_model');
-        $result = $this->forum_model->getFora();
-
+        //Print each section, done this way for counters; #topics, #replies (in all underlying topics combined)
         foreach ($result as $row) {
             $forum_id = $row->id;
-            $instantie = (
+            //Rows to print to userscreen
+            $result = (
                     '<tr>' .
-                    '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->naam . '</a></td>' .
-                    '<td>' . $row->omschrijving . '</td>' .
-                    '<td>Aantal topics:  ' . $this->aantalTopics($forum_id) . '</td>' .
-                    '<td>Aantal posts: ' . $this->aantalPostsPerForum($forum_id) . '</td>' .
+                    '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->title . '</a></td>' .
+                    '<td>' . $row->description . '</td>' .
+                    '<td>' . $this->countTopics($forum_id) . ' Topics</td>' .
+                    '<td>' . $this->countRepliesForum($forum_id) . ' Replies</td>' .
                     '</tr>'
                     );
-            $data[] = $instantie;
+            $data[] = $result;
         }
-        $bodyData['fora'] = $data;
+        $bodyData['forums'] = $data;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
-    public function aantalTopics($forum_id) {
-        $this->load->model('topic_model');
-        $aantal = $this->topic_model->getAantal($forum_id);
-        return $aantal;
+    public function countTopics($forum_id) {
+        $count = $this->topic_model->getCount($forum_id);
+        return $count;
     }
-    public function aantalPostsPerForum($forum_id) {
-        $this->load->model('topic_model');
-        $this->load->model('post_model');
+
+    public function countRepliesForum($forum_id) {
         $result = $this->topic_model->getId($forum_id);
-        
-        $aantal = 0;
-        foreach($result as $row)
-        {
-            $aantal += $this->post_model->getAantal($row->id);
+
+        $count = 0;
+        foreach ($result as $row) {
+            $count += $this->reply_model->getCount($row->id);
         }
-        return $aantal;
+        return $count;
     }
-    public function aantalPosts($topic_id)
-    {
-        $this->load->model('post_model');
-        $result = $this->post_model->getAantal($topic_id);
+
+    public function countReplies($topic_id) {
+        $result = $this->reply_model->getCount($topic_id);
         return $result;
     }
 
     public function topics($forum_id) {
         $headerData = ['title' => 'Topics'];
-
-        $this->load->model('topic_model');
         $result = $this->topic_model->getTopics($forum_id);
-        
-        foreach($result as $row)
-        {
+
+        foreach ($result as $row) {
             $topic_id = $row->id;
-            $instantie = (
+            $result = (
                     '<tr>' .
-                    '<td><a href="' . base_url() . 'forum/posts/' . $topic_id . '">' . $row->naam . '</a></td>' .
-                    '<td>' . $row->datum . '</td>' .
+                    '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a></td>' .
+                    '<td>' . $row->date . '</td>' .
                     '<td>' . $row->username . '</td>' .
-                    '<td>Aantal posts: ' . $this->aantalPosts($topic_id) . '</td>' .
+                    '<td>' . $this->countReplies($topic_id) . ' Replies</td>' .
                     '</tr>'
                     );
-            $data[] = $instantie;
+            $data[] = $result;
         }
-        $aantal = $this->aantalTopics($forum_id);
+        $count = $this->countTopics($forum_id);
 
         $bodyData['topics'] = $data;
-        $bodyData['aantal'] = $aantal;
-
+        $bodyData['count'] = $count;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('topic_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
-    public function posts($topic_id) {
-        $headerData = ['title' => 'Posts'];
+    public function replies($topic_id) {
+        $headerData = ['title' => 'Replies'];
+        $result = $this->reply_model->getReplies($topic_id);
+        $count = $this->reply_model->getCount($topic_id);
 
-        $this->load->model('post_model');
-        $result = $this->post_model->getPosts($topic_id);
-        $aantal = $this->post_model->getAantal($topic_id);
-
-        $bodyData['posts'] = $result;
-        $bodyData['aantal'] = $aantal;
+        $bodyData['replies'] = $result;
+        $bodyData['count'] = $count;
 
         $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('post_view', $bodyData);
+        $this->load->view('reply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
