@@ -56,15 +56,35 @@ class Forum extends CI_Controller {
         }
         return $aantal;
     }
+    public function aantalPosts($topic_id)
+    {
+        $this->load->model('post_model');
+        $result = $this->post_model->getAantal($topic_id);
+        return $result;
+    }
 
     public function topics($forum_id) {
         $headerData = ['title' => 'Topics'];
 
         $this->load->model('topic_model');
         $result = $this->topic_model->getTopics($forum_id);
+        
+        foreach($result as $row)
+        {
+            $topic_id = $row->id;
+            $instantie = (
+                    '<tr>' .
+                    '<td><a href="' . base_url() . 'forum/posts/' . $topic_id . '">' . $row->naam . '</a></td>' .
+                    '<td>' . $row->datum . '</td>' .
+                    '<td>' . $row->username . '</td>' .
+                    '<td>Aantal posts: ' . $this->aantalPosts($topic_id) . '</td>' .
+                    '</tr>'
+                    );
+            $data[] = $instantie;
+        }
         $aantal = $this->aantalTopics($forum_id);
 
-        $bodyData['topics'] = $result;
+        $bodyData['topics'] = $data;
         $bodyData['aantal'] = $aantal;
 
         $this->load->view('tmpHeader_view', $headerData);
