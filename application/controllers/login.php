@@ -8,10 +8,6 @@ if (!defined('BASEPATH'))
 
 class Login extends CI_Controller {
 
-    function __construct() {
-        parent::__construct();
-    }
-
     //inloggen
     public function index($error = NULL) {
         $headerData = ['title' => 'Login'];
