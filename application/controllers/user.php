@@ -16,7 +16,8 @@ class User extends CI_Controller {
 
     public function index() {
         // If the user is validated, then this function will run
-        $headerData = ['title' => 'Ingelogd'];
+        $headerData = ['title' => 'Ingelogd',
+            'info' => $this->session->all_userdata()];
         $bodyData = ['username' => $this->session->userdata['username']];
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('home_view', $bodyData);
