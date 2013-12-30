@@ -33,8 +33,7 @@ class Login extends CI_Controller {
         } else {
             // If user did validate, 
             // Send them to members area
-            //redirect('user');
-            echo 'login succes';
+            redirect('user');
         }
     }
 
