@@ -28,3 +28,6 @@ parent.location ='<?php echo base_url('fb/fblogin'); ?>'; //redirect uri after c
 },{scope: 'email,read_stream,publish_stream,user_birthday,user_location,user_work_history,user_hometown,user_photos'}); //permissions for facebook
 });
 </script>
+
+<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
+<p><a href="<?php echo base_url('fb/logout'); ?>">Logout</a></p>
