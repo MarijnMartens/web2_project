@@ -128,7 +128,7 @@ class Login extends CI_Controller {
             // If user did validate, 
             // Send them email
             $this->load->library('email');
-            $this->email->from('do-not-reply@marijnmartens.be', 'Hexion.be');
+            $this->email->from('contact@marijnmartens.be', 'Hexion.be');
             $this->email->to($email);
             $this->email->subject('Hexion Forgot Password');
             $this->email->message('Hello ' . $username . ', <br/> Your new password is <b>' . $result . '</b>.');
