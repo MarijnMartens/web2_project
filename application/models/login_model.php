@@ -8,15 +8,11 @@ if (!defined('BASEPATH'))
 
 class Login_model extends CI_Model {
 
-    function __construct() {
-        parent::__construct();
-    }
-
     public function validate($username, $password) {
-        // Prep the query
+        $this->db->select('*');
+        $this->db->from('user');
         $this->db->where('username', $username);
-        // Run the query
-        $query = $this->db->get('user');
+        $query = $this->db->get();
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
             $row = $query->row();

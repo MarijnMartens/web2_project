@@ -31,8 +31,9 @@ class User extends CI_Controller {
     }
 
     public function logout() {
+        $msg = '<p>Tot ziens ' . $this->session->userdata['username'] . ', tot binnenkort!.</p>';
         $this->session->sess_destroy();
-        redirect('login');
+        echo $msg;
     }
 
 }
