@@ -1,5 +1,8 @@
+<h2>Log in form</h2>
+<h6>Want to save time? </h6>
+<fb:login-button show-faces="true" width="200" max-rows="1"></fb:login-button>
+
 <form action='<?php echo base_url(); ?>login/login_process' method='post' name='process'>
-    <h2>User Login</h2>
     <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
     <table>
         <tr>
