@@ -3,8 +3,6 @@
 /*
  * Author: Marijn Martens
  * Created on: 29/12/2013
- * Last modified on: 
- * 
  * References: none
  */
 

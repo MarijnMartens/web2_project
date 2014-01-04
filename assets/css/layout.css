@@ -3,9 +3,26 @@
     Author     : Marijn
 */
 
+header {
+    background-color:yellow;
+}
+
+#user_menu {
+    visibility: hidden;
+}
+
 .error{
     color: red;
     font-weight: bold;
+}
+
+body {
+    background-color: whitesmoke;
+}
+
+footer {
+    text-align: center;
+    background-color:yellow;
 }
 
 //Dit dient om textfields en passwordfiels in IE even lang te maken
@@ -13,15 +30,7 @@ input {
     font-family: sans-serif;
 }
 
-body {
-    background-color: wheat;
+#twitter-timeline {
+    height: 500px;
+    width: 200px;
 }
-
-header, footer {
-    background-color:yellow;
-}
-
-/*header{
-    background-image: url('../images/logo.png');
-    background-repeat: no-repeat;
-}*/

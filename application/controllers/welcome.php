@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Author: Marijn
+ * Created on: 20/12/2013
+ */
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 

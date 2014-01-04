@@ -1,3 +1,11 @@
+<!-- 
+Author: Marijn
+Created on: 20/12/2013
+Last modified on: 04/01/2014
+Edit: 04/01/2014: Session implementation; hide/show user controls
+References: none
+-->
+
 <!DOCTYPE html>
 <html lang="nl"> <!-- Important for the Twitter Timeline -->
     <head>
@@ -9,17 +17,17 @@
     <body>
         <header>
             <img src="../../assets/images/logo.png" alt="logo" height="100"/>
-            <ul id="login_menu">
+            <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
                 <li><a href="<?php echo base_url('login/index'); ?>">Login</a></li>
                 <li><a href="<?php echo base_url('login/register'); ?>">Register</a></li>
             </ul>
 
-            <ul id="user_menu">
+            <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
                 <li>settings</li>
                 <li>messenger</li>
                 <li>member list</li>
                 <li>notifications</li>
-                <li>logout</li>
+                <li><a href="<?php echo base_url('login/logout'); ?>">Logout</a></li>
             </ul>
 
             <ul id="menu">

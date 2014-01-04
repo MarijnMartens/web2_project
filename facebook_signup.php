@@ -13,7 +13,7 @@ $facebook = new Facebook(array(
 )); // all we are doing is creating an array for facebook to use with our app id and app secret in and setting the cookie to true
 try {
   $me = $facebook->api('/me');
-} catch (FacebookApiException $e) {
+} catch (FacebookApiException $e){ 
   error_log($e);
 } // this code is saying if the session to the app is created use the $me as a selector for the information or die
 ?>

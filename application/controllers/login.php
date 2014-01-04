@@ -1,10 +1,18 @@
 <?php
 
+/*
+ * Author: Marijn
+ * Created on: 20/12/2013
+ * Last modified on: 04/01/2014
+ * Edit: 26/12/2013: Email password reset
+ * Edit: 04/01/2014: Logout function
+ * References: 
+ * - Basic login control: http://www.jotorres.com/2012/03/create-user-login-with-codeigniter/
+ * - Session control: http://www.sparklepod.com/myblog/codeigniter-session-and-login-tutorial/
+ */
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-/* Basis login gebaseerd op:
- * http://www.jotorres.com/2012/03/create-user-login-with-codeigniter/
- */
 
 class Login extends CI_Controller {
 
@@ -35,6 +43,12 @@ class Login extends CI_Controller {
             // Send them to members area
             redirect('user');
         }
+    }
+
+    public function logout() {
+        $msg = 'Tot ziens ' . $this->session->userdata['username'] . ', tot binnenkort!';
+        $this->session->sess_destroy();
+        $this->index($msg);
     }
 
     //registereren
@@ -103,15 +117,15 @@ class Login extends CI_Controller {
     }
 
     //wachtwoord vergeten
-    public function password_forgot($error = NULL){
+    public function password_forgot($error = NULL) {
         $headerData = ['title' => 'Request new password'];
         $bodyData['error'] = $error;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('passwordReset_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-    
-    public function password_reset(){
+
+    public function password_reset() {
         // grab user input
         $username = $this->security->xss_clean($this->input->post('username'));
         $email = $this->security->xss_clean($this->input->post('email'));
@@ -137,4 +151,5 @@ class Login extends CI_Controller {
             $this->index($error = '<span style="color:blue;">Een E-mail werd naar ' . $email . ' verzonden.</span>');
         }
     }
+
 }
