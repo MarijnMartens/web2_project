@@ -16,7 +16,7 @@ References: none
     </head>
     <body>
         <header>
-            <img src="../../assets/images/logo.png" alt="logo" height="100"/>
+            <a href="<?php echo base_url('welcome/index'); ?>"><img src="../../assets/images/logo.png" alt="logo" height="100"/><a/>
             <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
                 <li><a href="<?php echo base_url('login/index'); ?>">Login</a></li>
                 <li><a href="<?php echo base_url('login/register'); ?>">Register</a></li>

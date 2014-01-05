@@ -1,9 +1,11 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Author: Marijn
+ * Created on: 20/12/2013
+ * Last modified on: 04/01/2014
+ * Edit: 04/01/2014: User-level restriction
+ * References: none
  */
 
 if (!defined('BASEPATH'))
@@ -11,9 +13,10 @@ if (!defined('BASEPATH'))
 
 class Forum_model extends CI_Model {
 
-    public function getForums() {
+    public function getForums($level = 0) {
         $this->db->select('*');
         $this->db->from('forum');
+        $this->db->where('level <=', $level);
         $this->db->order_by('id');
         $query = $this->db->get();
         return $query->result();

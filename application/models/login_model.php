@@ -19,9 +19,10 @@ class Login_model extends CI_Model {
             if (password_verify($password, $row->password)) {
                 // If there is a user, then create session data
                 $data = array(
-                    'userid' => $row->id,
+                    'user_id' => $row->id,
                     'username' => $row->username,
                     'email' => $row->email,
+                    'level' => $row->level,
                     'validated' => true
                 );
                 $this->session->set_userdata($data);
@@ -32,6 +33,8 @@ class Login_model extends CI_Model {
         // then return false.
         return false;
     }
+    
+    
 }
 
 ?>

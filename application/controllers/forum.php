@@ -22,8 +22,9 @@ class Forum extends CI_Controller {
     //Main Forum - Lists different sections: Guests (i.e. FAQ, Guestbook) / Users / Hexioners / Admins
     public function index() {
         $headerData = ['title' => 'Forum'];
-        //Get all sections from database
-        $result = $this->forum_model->getForums();
+        //Get all sections from database where level is equal or higher
+        $level = $this->session->userdata('level');
+        $result = $this->forum_model->getForums($level);
 
         //Print each section, done this way for counters; #topics, #replies (in all underlying topics combined)
         foreach ($result as $row) {
@@ -73,6 +74,7 @@ class Forum extends CI_Controller {
 
     //display list of topics, more or less like function 'index'
     public function topics($forum_id) {
+        $this->session->set_flashdata('forum_id', $forum_id);
         $headerData = ['title' => 'Topics'];
         $result = $this->topic_model->getTopics($forum_id);
         $data[] = NULL;
@@ -101,8 +103,49 @@ class Forum extends CI_Controller {
         $this->load->view('tmpFooter_view');
     }
 
+    public function insertTopic($error = NULL) {
+        if ($this->session->userdata('level') < 1){
+            redirect('login');
+        }
+        
+        $forum_id = $this->session->flashdata('forum_id');
+
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+
+        //Fields die gecontroleerd gaan worden
+        $this->form_validation->set_rules(
+                'title', 'Title', 'required|'
+                . 'min_length[5]|'
+                . 'max_length[200]|'
+        );
+
+        //Validation form
+        if ($this->form_validation->run() == FALSE) {
+            $headerData = ['title' => 'Nieuw Topic'];
+            $bodyData['error'] = $error;
+            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('insertTopic_view', $bodyData);
+            $this->load->view('tmpFooter_view');
+            $forum_id = $this->session->keep_flashdata('forum_id');
+        } else { //Validation is OK, open model to insert new topic
+            $this->load->model('topic_model');
+            $result = $this->topic_model->insert(
+                    $forum_id, $this->session->userdata('user_id'), $this->input->post('title')
+            );
+            if (!$result) { //Model did not insert data in database
+                $bodyData = ['error' => 'Insert in database failed,'
+                    . ' sure database is up and running?'];
+                $this->insertTopic($error);
+            } else {
+                $this->topics($forum_id);
+            }
+        }
+    }
+
     //display list of replies in one topic
     public function replies($topic_id) {
+        $this->session->set_flashdata('topic_id', $topic_id);
         $headerData = ['title' => 'Replies'];
         $result = $this->reply_model->getReplies($topic_id);
         $count = $this->reply_model->getCount($topic_id);
@@ -113,6 +156,48 @@ class Forum extends CI_Controller {
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('reply_view', $bodyData);
         $this->load->view('tmpFooter_view');
+    }
+    
+    public function insertReply($error = NULL){
+        $topic_id = $this->session->flashdata('topic_id');
+        $user_id = $this->session->userdata('user_id');
+        $guest_id = NULL;
+        if ($user_id == NULL){
+            $guest_id = $this->reply_model->anonymous();
+        }
+        
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+
+        //Fields die gecontroleerd gaan worden
+        $this->form_validation->set_rules(
+                'reply', 'Post', 'required|'
+                . 'min_length[2]|'
+                . 'max_length[1000]|'
+        );
+        
+        //Validation form
+        if ($this->form_validation->run() == FALSE) {
+            $headerData = ['title' => 'Nieuw Reply'];
+            $bodyData['error'] = $error;
+            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('insertReply_view', $bodyData);
+            $this->load->view('tmpFooter_view');
+            $topic_id = $this->session->keep_flashdata('topic_id');
+        } else { //Validation is OK, open model to insert new topic
+            $this->load->model('reply_model');
+            $result = $this->reply_model->insert(
+                    $topic_id, $this->input->post('reply'), $user_id, $guest_id 
+            );
+            if (!$result) { //Model did not insert data in database
+                $bodyData = ['error' => 'Insert in database failed,'
+                    . ' sure database is up and running?'];
+                $this->insertReply($error);
+            } else {
+                $this->replies($topic_id);
+            }
+        }
+        
     }
 
 }

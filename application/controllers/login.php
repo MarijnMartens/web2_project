@@ -46,9 +46,8 @@ class Login extends CI_Controller {
     }
 
     public function logout() {
-        $msg = 'Tot ziens ' . $this->session->userdata['username'] . ', tot binnenkort!';
         $this->session->sess_destroy();
-        $this->index($msg);
+        $this->index('Tot ziens!');
     }
 
     //registereren

@@ -25,11 +25,13 @@ footer {
     background-color:greenyellow;
 }
 
-//Dit dient om textfields en passwordfiels in IE even lang te maken
+/* Dit dient om textfields en passwordfiels in IE even lang te maken */
 input {
-    font-family: sans-serif;
+    font-family: sans-serif; 
 }
 
+//vaste hoogte en breedte omdat de timeline langer duurt om in te laden, 
+//hiermee voorkomen we dat de pagina verschuift als de timeline klaar is
 #twitter-timeline {
     height: 500px;
     width: 200px;
