@@ -51,7 +51,7 @@ class Forum extends CI_Controller {
 
     //count all replies in one topic
     private function countReplies($topic_id) {
-        $result = $this->reply_model->getCount($topic_id);
+        $result = $this->reply_model->getCount($topic_id) - 1;
         return $result;
     }
 
@@ -60,7 +60,7 @@ class Forum extends CI_Controller {
         $result = $this->topic_model->getAll($forum_id);
         $count = 0;
         foreach ($result as $row) {
-            $count += $this->reply_model->getCount($row->id);
+            $count += $this->reply_model->getCount($row->id) - 1;
         }
         return $count;
     }
@@ -118,12 +118,14 @@ class Forum extends CI_Controller {
 
     //insert new topic
     public function insertTopic($error = NULL) {
+        $forum_id = $this->session->flashdata('forum_id');
+        $user_id = $this->session->userdata('user_id');
+
         //guests are not allowed to insert a topic
         if ($this->session->userdata('level') < 1) {
-            redirect('forum/index');
+            $this->topics($forum_id);
         }
 
-        $forum_id = $this->session->flashdata('forum_id');
         //Modifying URL should not let you reach insertTopic but just to be safe
         $this->checkLevel($forum_id);
 
@@ -135,7 +137,11 @@ class Forum extends CI_Controller {
                 . 'min_length[5]|'
                 . 'max_length[100]|'
         );
-        $this->form_validation->set_message('title', 'Title of the topic has to be between 5 and 100 characters');
+        $this->form_validation->set_rules(
+                'reply', 'OP', 'required|'
+                . 'min_length[2]|'
+                . 'max_length[1000]|'
+        );
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
@@ -146,16 +152,25 @@ class Forum extends CI_Controller {
             $this->load->view('tmpFooter_view');
             $forum_id = $this->session->keep_flashdata('forum_id');
         } else { //Validation is OK, open model to insert new topic
-            $this->load->model('topic_model');
-            $result = $this->topic_model->insert(
-                    $forum_id, $this->session->userdata('user_id'), $this->input->post('title')
+            $result_topic = $this->topic_model->insert(
+                    $forum_id, $user_id, $this->input->post('title')
             );
-            if (!$result) { //Model did not insert data in database
-                $bodyData = ['error' => 'Insert in database failed,'
+            if (!$result_topic) { //Model did not insert data in database
+                $bodyData = ['error' => 'Insert in topic-table failed,'
                     . ' sure database is up and running?'];
                 $this->insertTopic($error);
             } else {
-                $this->topics($forum_id);
+                $this->load->model('reply_model');
+                $result_reply = $this->reply_model->insert(
+                        $result_topic, $this->input->post('reply'), $user_id
+                );
+                if (!$result_reply) { //Model did not insert data in database
+                    $bodyData = ['error' => 'Insert in database failed,'
+                        . ' sure database is up and running?'];
+                    $this->insertReply($error);
+                } else {
+                    $this->replies($result_topic);
+                }
             }
         }
     }
@@ -165,7 +180,7 @@ class Forum extends CI_Controller {
         $this->session->set_flashdata('topic_id', $topic_id);
         $headerData = ['title' => 'Replies'];
         $result = $this->reply_model->getReplies($topic_id);
-        $count = $this->reply_model->getCount($topic_id);
+        $count = $this->reply_model->getCount($topic_id) - 1;
 
         $bodyData['replies'] = $result;
         $bodyData['count'] = $count;

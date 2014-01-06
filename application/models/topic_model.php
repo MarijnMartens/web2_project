@@ -59,7 +59,10 @@ class Topic_model extends CI_Model {
             $this->db->insert('topic', $data);
             $query = $this->db->affected_rows();
             if ($query == 1) {
-                return TRUE;
+                $this->db->select('MAX(id) as max_id');
+                $this->db->from('topic');
+                $query = $this->db->get();
+                return $query->row()->max_id;
             } else {
                 return FALSE;
             }

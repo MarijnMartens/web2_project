@@ -79,7 +79,7 @@ class Login extends CI_Controller {
                 . 'is_unique[user.email]'
         );
 
-        //Aangepaste melding
+        //Custom errormessage
         $this->form_validation->set_message('is_unique', '%s is already used');
         $this->form_validation->set_message('matches', 'Passwords do not match');
 
