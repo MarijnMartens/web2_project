@@ -39,7 +39,7 @@ class Topic_model extends CI_Model {
         return $query->row()->count;
     }
 
-    //return list of topic id's from on forum, 
+    //return list of topic id's from one forum, 
     //used for reply counter in forum
     public function getAll($forum_id) {
         $this->db->select('*');

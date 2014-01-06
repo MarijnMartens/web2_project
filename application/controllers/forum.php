@@ -45,14 +45,19 @@ class Forum extends CI_Controller {
         //Send array to view
         $bodyData['forums'] = $data;
         $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('forum_view', $bodyData);
+        $this->load->view('forum/forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
+    }
+
+    //count all replies in one topic
+    private function countReplies($topic_id) {
+        $result = $this->reply_model->getCount($topic_id);
+        return $result;
     }
 
     //Function for index to count all replies from all sub-topics
     private function countRepliesForum($forum_id) {
         $result = $this->topic_model->getAll($forum_id);
-
         $count = 0;
         foreach ($result as $row) {
             $count += $this->reply_model->getCount($row->id);
@@ -66,16 +71,21 @@ class Forum extends CI_Controller {
         return $count;
     }
 
-    //count all replies in one topic
-    private function countReplies($topic_id) {
-        $result = $this->reply_model->getCount($topic_id);
-        return $result;
+    //security measure to disable modifying URL
+    private function checkLevel($forum_id) {
+        $user_level = $this->session->userdata('level');
+        $forum_level = $this->forum_model->getLevel($forum_id);
+        if ($user_level < $forum_level) {
+            redirect('forum/index');
+        }
     }
 
     //display list of topics, more or less like function 'index'
     public function topics($forum_id) {
+        //Set flashdata to remember forum_id when creating a new topic
         $this->session->set_flashdata('forum_id', $forum_id);
         $headerData = ['title' => 'Topics'];
+        //make list of topics
         $result = $this->topic_model->getTopics($forum_id);
         $data[] = NULL;
         //print each topic
@@ -94,8 +104,11 @@ class Forum extends CI_Controller {
             }
         }
 
+        //count # topics
         $count = $this->countTopics($forum_id);
-
+        //security measure to disable modifying URL
+        $this->checkLevel($forum_id);
+        //display page
         $bodyData['topics'] = $data;
         $bodyData['count'] = $count;
         $this->load->view('tmpHeader_view', $headerData);
@@ -103,22 +116,26 @@ class Forum extends CI_Controller {
         $this->load->view('tmpFooter_view');
     }
 
+    //insert new topic
     public function insertTopic($error = NULL) {
-        if ($this->session->userdata('level') < 1){
-            redirect('login');
+        //guests are not allowed to insert a topic
+        if ($this->session->userdata('level') < 1) {
+            redirect('forum/index');
         }
-        
+
         $forum_id = $this->session->flashdata('forum_id');
+        //Modifying URL should not let you reach insertTopic but just to be safe
+        $this->checkLevel($forum_id);
 
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-
-        //Fields die gecontroleerd gaan worden
+        //Valide field Title
         $this->form_validation->set_rules(
                 'title', 'Title', 'required|'
                 . 'min_length[5]|'
-                . 'max_length[200]|'
+                . 'max_length[100]|'
         );
+        $this->form_validation->set_message('title', 'Title of the topic has to be between 5 and 100 characters');
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
@@ -157,15 +174,15 @@ class Forum extends CI_Controller {
         $this->load->view('reply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-    
-    public function insertReply($error = NULL){
+
+    public function insertReply($error = NULL) {
         $topic_id = $this->session->flashdata('topic_id');
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
-        if ($user_id == NULL){
+        if ($user_id == NULL) {
             $guest_id = $this->reply_model->anonymous();
         }
-        
+
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
 
@@ -175,7 +192,7 @@ class Forum extends CI_Controller {
                 . 'min_length[2]|'
                 . 'max_length[1000]|'
         );
-        
+
         //Validation form
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Nieuw Reply'];
@@ -187,7 +204,7 @@ class Forum extends CI_Controller {
         } else { //Validation is OK, open model to insert new topic
             $this->load->model('reply_model');
             $result = $this->reply_model->insert(
-                    $topic_id, $this->input->post('reply'), $user_id, $guest_id 
+                    $topic_id, $this->input->post('reply'), $user_id, $guest_id
             );
             if (!$result) { //Model did not insert data in database
                 $bodyData = ['error' => 'Insert in database failed,'
@@ -197,7 +214,6 @@ class Forum extends CI_Controller {
                 $this->replies($topic_id);
             }
         }
-        
     }
 
 }

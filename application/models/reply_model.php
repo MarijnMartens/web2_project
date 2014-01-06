@@ -23,6 +23,7 @@ class Reply_model extends CI_Model {
         return $query->result();
     }
     
+    //count replies per topic
     public function getCount($topic_id){
         $this->db->select('count(*) as count');
         $this->db->from('reply');
@@ -37,7 +38,7 @@ class Reply_model extends CI_Model {
             return $guest_id;
     }
     
-    public function insert($topic_id, $msg, $user_id = NULL, $guest_id = NULL)
+    public function insert($topic_id, $msg, $user_id = 0, $guest_id = 0)
     {
          $data = array(
                 'topic_id' => $topic_id,

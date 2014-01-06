@@ -21,5 +21,13 @@ class Forum_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
+    //Restrict access
+    public function getLevel($forum_id){
+        $this->db->select('level');
+        $this->db->from('forum');
+        $this->db->where('id', $forum_id);
+        $query = $this->db->get();
+        return $query->row()->level;
+    }
 
 }

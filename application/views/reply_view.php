@@ -10,7 +10,7 @@
             } else {
                 echo 'Gast' . $reply->guest_id; 
             }?></td>
-            <td><?php echo $reply->message; ?></td>
+            <td><?php echo nl2br($reply->message); ?></td>
         </tr>
     <?php } ?>
 </table>
