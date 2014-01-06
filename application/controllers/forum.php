@@ -124,52 +124,53 @@ class Forum extends CI_Controller {
         //guests are not allowed to insert a topic
         if ($this->session->userdata('level') < 1) {
             $this->topics($forum_id);
-        }
+        } else {
 
-        //Modifying URL should not let you reach insertTopic but just to be safe
-        $this->checkLevel($forum_id);
+            //Modifying URL should not let you reach insertTopic but just to be safe
+            $this->checkLevel($forum_id);
 
-        $this->load->library('form_validation');
-        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-        //Valide field Title
-        $this->form_validation->set_rules(
-                'title', 'Title', 'required|'
-                . 'min_length[5]|'
-                . 'max_length[100]|'
-        );
-        $this->form_validation->set_rules(
-                'reply', 'OP', 'required|'
-                . 'min_length[2]|'
-                . 'max_length[1000]|'
-        );
-
-        //Validation form
-        if ($this->form_validation->run() == FALSE) {
-            $headerData = ['title' => 'Nieuw Topic'];
-            $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
-            $this->load->view('insertTopic_view', $bodyData);
-            $this->load->view('tmpFooter_view');
-            $forum_id = $this->session->keep_flashdata('forum_id');
-        } else { //Validation is OK, open model to insert new topic
-            $result_topic = $this->topic_model->insert(
-                    $forum_id, $user_id, $this->input->post('title')
+            $this->load->library('form_validation');
+            $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+            //Valide field Title
+            $this->form_validation->set_rules(
+                    'title', 'Title', 'required|'
+                    . 'min_length[5]|'
+                    . 'max_length[100]|'
             );
-            if (!$result_topic) { //Model did not insert data in database
-                $bodyData = ['error' => 'Insert in topic-table failed,'
-                    . ' sure database is up and running?'];
-                $this->insertTopic($error);
-            } else {
-                $this->load->model('reply_model');
-                $result_reply = $this->reply_model->insert(
-                        $result_topic, $this->input->post('reply'), $user_id
+            $this->form_validation->set_rules(
+                    'reply', 'OP', 'required|'
+                    . 'min_length[2]|'
+                    . 'max_length[1000]|'
+            );
+
+            //Validation form
+            if ($this->form_validation->run() == FALSE) {
+                $headerData = ['title' => 'Nieuw Topic'];
+                $bodyData['error'] = $error;
+                $this->load->view('tmpHeader_view', $headerData);
+                $this->load->view('insertTopic_view', $bodyData);
+                $this->load->view('tmpFooter_view');
+                $forum_id = $this->session->keep_flashdata('forum_id');
+            } else { //Validation is OK, open model to insert new topic
+                $result_topic = $this->topic_model->insert(
+                        $forum_id, $user_id, $this->input->post('title')
                 );
-                if (!$result_reply) { //Model did not insert data in database
-                    $bodyData = ['error' => 'Insert in database failed,'
+                if (!$result_topic) { //Model did not insert data in database
+                    $bodyData = ['error' => 'Insert in topic-table failed,'
                         . ' sure database is up and running?'];
-                    $this->insertReply($error);
+                    $this->insertTopic($error);
                 } else {
-                    $this->replies($result_topic);
+                    $this->load->model('reply_model');
+                    $result_reply = $this->reply_model->insert(
+                            $result_topic, $this->input->post('reply'), $user_id
+                    );
+                    if (!$result_reply) { //Model did not insert data in database
+                        $bodyData = ['error' => 'Insert in database failed,'
+                            . ' sure database is up and running?'];
+                        $this->insertReply($error);
+                    } else {
+                        $this->replies($result_topic);
+                    }
                 }
             }
         }
