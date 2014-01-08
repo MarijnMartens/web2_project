@@ -20,7 +20,7 @@ if ($_SERVER['HTTP_HOST'] !="localhost"){
     $config['base_url'] = 'http://projectweb2.azurewebsites.net/index.php';
 } else {
     $config['base_url']	= 'http://localhost/project_web2/index.php';
-}
+} 
 /*
 |--------------------------------------------------------------------------
 | Index File

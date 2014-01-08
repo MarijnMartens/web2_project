@@ -76,7 +76,8 @@ class Forum extends CI_Controller {
         $user_level = $this->session->userdata('level');
         $forum_level = $this->forum_model->getLevel($forum_id);
         if ($user_level < $forum_level) {
-            redirect('forum/index');
+            $this->session->set_flashdata('message', 'Gasten mogen niet in dit forum!');
+            redirect('welcome/message');
         }
     }
 
@@ -97,7 +98,7 @@ class Forum extends CI_Controller {
                         '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a></td>' .
                         '<td>' . $row->date . '</td>' .
                         '<td>' . $row->username . '</td>' .
-                        '<td>' . $this->countReplies($topic_id) . ' Replies</td>' .
+                        '<td>' . $this->countReplies($topic_id) . ' Antwoorden</td>' .
                         '</tr>'
                         );
                 $data[] = $result;
@@ -123,7 +124,8 @@ class Forum extends CI_Controller {
 
         //guests are not allowed to insert a topic
         if ($this->session->userdata('level') < 1) {
-            $this->topics($forum_id);
+            $this->session->set_flashdata('message', 'Je moet eerst inloggen vooraleer je een topic mag aanmaken');
+            redirect('welcome/message');
         } else {
 
             //Modifying URL should not let you reach insertTopic but just to be safe

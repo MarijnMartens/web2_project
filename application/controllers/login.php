@@ -52,7 +52,7 @@ class Login extends CI_Controller {
         $this->index('Tot ziens!');
     }
 
-    //registereren
+    //register
     public function register($error = NULL) {
         //Call for methods
         $this->load->helper(array('form', 'url'));
