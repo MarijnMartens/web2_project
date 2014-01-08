@@ -1,3 +1,9 @@
+<!-- 
+Author: Marijn
+Created on: 20/12/2013
+References: none
+-->
+
 <h2>Log in form</h2>
 
 <form action='<?php echo base_url(); ?>login/login_process' method='post' name='process'>

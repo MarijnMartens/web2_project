@@ -6,6 +6,7 @@
  * Last modified on: 04/01/2014
  * Edit: 26/12/2013: Email password reset
  * Edit: 04/01/2014: Logout function
+ * Edit: 08/01/2014: Translated errors, reducing code
  * References: 
  * - Basic login control: http://www.jotorres.com/2012/03/create-user-login-with-codeigniter/
  * - Session control: http://www.sparklepod.com/myblog/codeigniter-session-and-login-tutorial/
@@ -27,8 +28,9 @@ class Login extends CI_Controller {
 
     public function login_process() {
         // grab user input
-        $username = $this->security->xss_clean($this->input->post('username'));
-        $password = $this->security->xss_clean($this->input->post('password'));
+        // security handled in config.php
+        $username = $this->input->post('username');
+        $password = $this->input->post('password');
         // Load the model
         $this->load->model('login_model');
         // Validate the user can login
@@ -36,7 +38,7 @@ class Login extends CI_Controller {
         // Now we verify the result
         if (!$result) {
             // If user did not validate, then show them login page again
-            $error = 'Invalid username and/or password.';
+            $error = 'Gebruikersnaam en/of paswoord incorrect';
             $this->index($error);
         } else {
             // If user did validate, 
@@ -52,36 +54,32 @@ class Login extends CI_Controller {
 
     //registereren
     public function register($error = NULL) {
-        //Methodes oproepen
+        //Call for methods
         $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
 
-        //Fields die gecontroleerd gaan worden
+        //Input field validation
         $this->form_validation->set_rules(
-                'username', 'Username', 'required|'
+                'username', 'Gebruikersnaam', 'required|'
                 . 'min_length[3]|'
                 . 'max_length[20]|'
                 . 'callback_register_username_check|'
                 . 'is_unique[user.username]'
         );
         $this->form_validation->set_rules(
-                'password', 'Password', 'required|'
+                'password', 'Paswoord', 'required|'
                 . 'min_length[3]|'
                 . 'matches[passconf]'
         );
         $this->form_validation->set_rules(
-                'passconf', 'Password Confirmation', 'required|'
+                'passconf', 'Herhaling paswoord', 'required|'
         );
         $this->form_validation->set_rules(
-                'email', 'Email', 'required|'
+                'email', 'Email adres', 'required|'
                 . 'valid_email|'
                 . 'is_unique[user.email]'
         );
-
-        //Custom errormessage
-        $this->form_validation->set_message('is_unique', '%s is already used');
-        $this->form_validation->set_message('matches', 'Passwords do not match');
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
@@ -96,8 +94,7 @@ class Login extends CI_Controller {
                     $this->input->post('username'), $this->input->post('password'), $this->input->post('email')
             );
             if (!$result) { //Model did not insert data in database
-                $bodyData = ['error' => 'Insert in database failed,'
-                    . ' sure database is up and running?'];
+                $bodyData = ['error' => 'Invoer in database is mislukt'];
                 $this->register($error);
             } else {
                 $this->login_process();
@@ -105,19 +102,19 @@ class Login extends CI_Controller {
         }
     }
 
-    //Admin niet toelaten als username
+    //'Admin' is not allowed as username to not confuse other users
     public function register_username_check($str) {
         if (!strcasecmp($str, 'admin')) { //strcasecmp is case insensitive
-            $this->form_validation->set_message('username_check', '%s may not be \'' . $str . '\''); //%s is human name field form
+            $this->form_validation->set_message('username_check', '%s is niet toegelaten als gebruikersnaam');
             return FALSE;
         } else {
             return TRUE;
         }
     }
 
-    //wachtwoord vergeten
+    //Forgot password
     public function password_forgot($error = NULL) {
-        $headerData = ['title' => 'Request new password'];
+        $headerData = ['title' => 'Vraag nieuw paswoord aan'];
         $bodyData['error'] = $error;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('passwordReset_view', $bodyData);
@@ -126,8 +123,8 @@ class Login extends CI_Controller {
 
     public function password_reset() {
         // grab user input
-        $username = $this->security->xss_clean($this->input->post('username'));
-        $email = $this->security->xss_clean($this->input->post('email'));
+        $username = $this->input->post('username');
+        $email = $this->input->post('email');        
         // Load the model
         $this->load->model('password_model');
         // Validate the user has correct username and email
@@ -135,19 +132,18 @@ class Login extends CI_Controller {
         // Now we verify the result
         if (!$result) {
             // If user did not validate, then show them login page again
-            $error = 'Invalid username and/or email.';
+            $error = 'Gebruikersnaam of email adres is fout';
             $this->password_forgot($error);
         } else {
             // If user did validate, 
             // Send them email
             $this->load->library('email');
-            $this->email->from('contact@marijnmartens.be', 'Hexion.be');
+            $this->email->from('do-not-reply@hexioners.be', 'Hexioners.be');
             $this->email->to($email);
-            $this->email->subject('Hexion Forgot Password');
-            $this->email->message('Hello ' . $username . ', <br/> Your new password is <b>' . $result . '</b>.');
+            $this->email->subject('Reset paswoord Hexioners.be');
+            $this->email->message('Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result . '</b>.');
             $this->email->send();
-            echo $result;
-            $this->index($error = '<span style="color:blue;">Een E-mail werd naar ' . $email . ' verzonden.</span>');
+            $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
         }
     }
 

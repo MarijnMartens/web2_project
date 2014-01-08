@@ -112,7 +112,7 @@ class Forum extends CI_Controller {
         $bodyData['topics'] = $data;
         $bodyData['count'] = $count;
         $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('topic_view', $bodyData);
+        $this->load->view('forum/topic_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
@@ -148,7 +148,7 @@ class Forum extends CI_Controller {
                 $headerData = ['title' => 'Nieuw Topic'];
                 $bodyData['error'] = $error;
                 $this->load->view('tmpHeader_view', $headerData);
-                $this->load->view('insertTopic_view', $bodyData);
+                $this->load->view('forum/insertTopic_view', $bodyData);
                 $this->load->view('tmpFooter_view');
                 $forum_id = $this->session->keep_flashdata('forum_id');
             } else { //Validation is OK, open model to insert new topic
@@ -187,7 +187,7 @@ class Forum extends CI_Controller {
         $bodyData['count'] = $count;
 
         $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('reply_view', $bodyData);
+        $this->load->view('forum/reply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
@@ -214,7 +214,7 @@ class Forum extends CI_Controller {
             $headerData = ['title' => 'Nieuw Reply'];
             $bodyData['error'] = $error;
             $this->load->view('tmpHeader_view', $headerData);
-            $this->load->view('insertReply_view', $bodyData);
+            $this->load->view('forum/insertReply_view', $bodyData);
             $this->load->view('tmpFooter_view');
             $topic_id = $this->session->keep_flashdata('topic_id');
         } else { //Validation is OK, open model to insert new topic

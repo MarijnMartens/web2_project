@@ -1,10 +1,16 @@
 <?php
 
+/*
+ * Author: Marijn Martens
+ * Created on: 29/12/2013
+ * Last modified on: 08/01/2014
+ * Edit: 08/01/2014: username and email no longer both required
+ * References: none
+ */
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-/* Author: Jorge Torres
- * Description: Login model class
- */
+
 
 class Password_model extends CI_Model {
 
@@ -13,12 +19,18 @@ class Password_model extends CI_Model {
     }
 
     public function reset($username, $email) {
-        // Prep the query
-        $this->db->where('username', $username);
-        $this->db->where('email', $email);
-        
-        $password = random_string('alnum', 20);
-        //encrypting crypt, auto salt met cost
+        //Prep query
+        if(isset($username) && !(isset($email))){
+            $this->db->where('username', $username);
+        } else if (isset($email) && !(isset($username))){
+            $this->db->where('email', $email);
+        } else {
+            $this->db->where('username', $username);
+            $this->db->or_where('email', $email);
+        }
+        //not to long to keep it simple for the user
+        $password = random_string('alnum', 10);
+        //encrypting crypt, auto salt with cost
         $option = ['cost' => 12];
         $passwordEncrypted = password_hash($password, PASSWORD_DEFAULT, $option);
         $data = array('password' => $passwordEncrypted);

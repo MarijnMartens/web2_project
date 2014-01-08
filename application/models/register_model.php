@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * Author: Marijn Martens
+ * Created on: 29/12/2013
+ * References: none
+ */
+
 class Register_model extends CI_Model
 {
     function __construct() {

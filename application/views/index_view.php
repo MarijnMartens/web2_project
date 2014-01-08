@@ -6,7 +6,34 @@ Edit: 04/01/2014: Twitter Timeline implentation
 References: Official Twitter developer manual
 -->
 
-<h1>Index pagina</h1>
+    <h1>Demonstratie inklappen eiland <span style="font-size: 0.5em;">▲</span></h1> <!-- bij klikken valt style weg -->
+    <table>
+        <tr>
+            <td>row 1 col 1</td>
+            <td>row 1 col 2</td>
+        </tr>
+        <tr>
+            <td>row 2 col 1</td>
+            <td>row 2 col 2</td>
+        </tr>
+        <tr>
+            <td>row 3 col 1</td>
+            <td>row 3 col 2 with extra long text</td>
+        </tr>
+    </table>
+
+<script>
+            $(document).ready(function()
+            {
+                $("h2").click(function()
+                {
+                    $(this).hide();
+                    $(this).next().hide();
+                });
+            });
+        </script>
+
+<h1>Twitter</h1>
 <div id="twitter-timeline"
      <a class="twitter-timeline"  
         width="200"

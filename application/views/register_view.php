@@ -1,3 +1,9 @@
+<!-- 
+Author: Marijn
+Created on: 20/12/2013
+References: none
+-->
+
 <?php echo form_open('login/register'); ?>
 <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
 <table>
