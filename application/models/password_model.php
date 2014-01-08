@@ -14,20 +14,25 @@ if (!defined('BASEPATH'))
 
 class Password_model extends CI_Model {
 
-    function __construct() {
-        parent::__construct();
-    }
-
     public function reset($username, $email) {
-        //Prep query
-        if(isset($username) && !(isset($email))){
-            $this->db->where('username', $username);
-        } else if (isset($email) && !(isset($username))){
-            $this->db->where('email', $email);
-        } else {
-            $this->db->where('username', $username);
-            $this->db->or_where('email', $email);
+        //username filled, email blank
+        if((!($username == '')) && ($email == '')){
+            //get mail
+            $email = $this->getEmail($username);
+            if (!$email){
+                return FALSE;
+            }
+        //username blank, email filled
+        } else if((!($email == '')) && ($username == '')){
+            //get username
+            $username = $this->getUsername($email);
+            if (!$username){
+                return FALSE;
+            }
         }
+        //both are already inserted, just get the data
+        //find row where is match
+        $this->db->where('username', $username);
         //not to long to keep it simple for the user
         $password = random_string('alnum', 10);
         //encrypting crypt, auto salt with cost
@@ -38,10 +43,41 @@ class Password_model extends CI_Model {
         $this->db->update('user', $data);
         // Let's check if there are any results
         if ($this->db->affected_rows() == 1) {
-         return $password;
+            //send everything back that CAN be missing (not necessarily missing)
+            $data = array('password' => $password,
+                'username' => $username,
+                'email' => $email);
+         return $data;
         } else {
-            // If the previous process did not validate
-            // then return false.
+            //user not found
+            return FALSE;
+        }
+    }
+    
+    private function getUsername($email) {
+        $this->db->select('*');
+        $this->db->from('user');
+        $this->db->where('email', $email);
+        $query = $this->db->get();
+        // Let's check if there are any results
+        if ($query->num_rows() == 1) {
+            $result = $query->row()->username;
+            return $result;
+        } else {
+            return FALSE;
+        }
+    }
+    
+    private function getEmail($username) {
+        $this->db->select('*');
+        $this->db->from('user');
+        $this->db->where('username', $username);
+        $query = $this->db->get();
+        // Let's check if there are any results
+        if ($query->num_rows() == 1) {
+            $result = $query->row()->email;
+            return $result;
+        } else {
             return FALSE;
         }
     }

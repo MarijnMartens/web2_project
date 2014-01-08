@@ -22,4 +22,4 @@ References: none
         </tr>
     </table>
 </form>
-<a href="<?php echo base_url(); ?>login/password_forgot">Paswoord vergeten?</a>
+<a href="<?php echo base_url(); ?>login/password_reset">Paswoord vergeten?</a>

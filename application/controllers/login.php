@@ -55,7 +55,6 @@ class Login extends CI_Controller {
     //register
     public function register($error = NULL) {
         //Call for methods
-        $this->load->helper(array('form', 'url'));
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
 
@@ -113,37 +112,65 @@ class Login extends CI_Controller {
     }
 
     //Forgot password
-    public function password_forgot($error = NULL) {
-        $headerData = ['title' => 'Vraag nieuw paswoord aan'];
-        $bodyData['error'] = $error;
-        $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('passwordReset_view', $bodyData);
-        $this->load->view('tmpFooter_view');
-    }
+    public function password_reset($error = NULL) {
+        //Call for methods
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+        //Input field validation
+        $this->form_validation->set_rules(
+                'username', 'Gebruikersnaam', 'min_length[3]|'
+                . 'max_length[20]'
+        );
+        $this->form_validation->set_rules(
+                'email', 'Email adres', 'valid_email'
+        );
 
-    public function password_reset() {
-        // grab user input
         $username = $this->input->post('username');
-        $email = $this->input->post('email');        
-        // Load the model
-        $this->load->model('password_model');
-        // Validate the user has correct username and email
-        $result = $this->password_model->reset($username, $email);
-        // Now we verify the result
-        if (!$result) {
-            // If user did not validate, then show them login page again
-            $error = 'Gebruikersnaam of email adres is fout';
-            $this->password_forgot($error);
-        } else {
-            // If user did validate, 
-            // Send them email
-            $this->load->library('email');
-            $this->email->from('do-not-reply@hexioners.be', 'Hexioners.be');
-            $this->email->to($email);
-            $this->email->subject('Reset paswoord Hexioners.be');
-            $this->email->message('Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result . '</b>.');
-            $this->email->send();
-            $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
+        $email = $this->input->post('email');
+
+        //Validation form
+        if ($this->form_validation->run() == FALSE) {
+            $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+            $bodyData['error'] = $error;
+            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('passwordReset_view', $bodyData);
+            $this->load->view('tmpFooter_view');
+        } else { //First validation is ok
+            //Check at least one field is filled
+            if ($username == '' && $email == '') {
+                $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+                $bodyData['error'] = 'Vul op zijn minst 1 van de velden in';
+                $this->load->view('tmpHeader_view', $headerData);
+                $this->load->view('passwordReset_view', $bodyData);
+                $this->load->view('tmpFooter_view');
+            } else {
+                //Validations both OK, go on with transaction
+                $this->load->model('password_model');
+                $result = $this->password_model->reset($username, $email);
+                if (!$result) { //Model did not insert data in database
+                    $bodyData = ['error' => 'Gebruikersnaam of email adres is fout'];
+                    $this->password_reset($error);
+                } else {
+                    if ($username == '') {
+                        //$username = $this->session->flashdata('username');
+                        $username = $result['username'];
+                    }
+                    if ($email == '') {
+                        //$email = $this->session->flashdata('email');
+                        $email = $result['email'];
+                    }
+                    // Send them email
+                    $this->load->model('email_model');
+                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 'VOS@10eten', 'do-not-reply@hexioners.be', $email, 'Reset paswoord Hexioners.be', 'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.'
+                    );
+                    if (!$result) {
+                        $error = 'De mailserver is even ziek, probeer later opnieuw';
+                        $this->password_reset($error);
+                    } else {
+                        $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
+                    }
+                }
+            }
         }
     }
 
