@@ -13,7 +13,7 @@ if (!defined('BASEPATH'))
 class Email_model extends CI_Model {
 
     public function mail($username, $password, $from, $to, $subject, $message) {
-        require './third_party/PHPMailer-master/class.phpmailer.php';
+        require 'application/third_party/PHPMailer-master/class.phpmailer.php';
 
                 try {
                     $mail = new PHPMailer;
@@ -41,6 +41,3 @@ class Email_model extends CI_Model {
             }
         }
         ?>
-}
-
-}
