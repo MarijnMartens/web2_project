@@ -59,7 +59,8 @@ class Password_model extends CI_Model {
         $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
-            $result = $query->row()->username;
+            $row = $query->row();
+            $result = $row->username;
             return $result;
         } else {
             return false;
@@ -71,7 +72,8 @@ class Password_model extends CI_Model {
         $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
-            $result = $query->row()->email;
+            $row = $query->row();
+            $result = $row->email;
             return $result;
         } else {
             return false;
