@@ -55,10 +55,8 @@ class Password_model extends CI_Model {
     }
     
     private function getUsername($email) {
-        $this->db->select('*');
-        $this->db->from('user');
         $this->db->where('email', $email);
-        $query = $this->db->get();
+        $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
             $result = $query->row()->username;
@@ -69,10 +67,8 @@ class Password_model extends CI_Model {
     }
     
     private function getEmail($username) {
-        $this->db->select('*');
-        $this->db->from('user');
         $this->db->where('username', $username);
-        $query = $this->db->get();
+        $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
             $result = $query->row()->email;
