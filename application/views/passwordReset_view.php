@@ -3,7 +3,7 @@ Author: Marijn
 Created on: 20/12/2013
 References: none
 -->
-<h2>Vul gebruikersnaam en/of email adres in</h2>
+<h2>Vul in wat je nog weet</h2>
 <?php echo validation_errors(); ?>
 <form action='<?php echo base_url(); ?>login/password_reset' method='post' name='password_reset'>
     <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
