@@ -20,14 +20,14 @@ class Password_model extends CI_Model {
             //get mail
             $email = $this->getEmail($username);
             if (!$email){
-                return FALSE;
+                return false;
             }
         //username blank, email filled
         } else if((!($email == '')) && ($username == '')){
             //get username
             $username = $this->getUsername($email);
             if (!$username){
-                return FALSE;
+                return false;
             }
         }
         //both are already inserted, just get the data
@@ -50,7 +50,7 @@ class Password_model extends CI_Model {
          return $data;
         } else {
             //user not found
-            return FALSE;
+            return false;
         }
     }
     
@@ -62,7 +62,7 @@ class Password_model extends CI_Model {
             $result = $query->row()->username;
             return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
     
@@ -74,7 +74,7 @@ class Password_model extends CI_Model {
             $result = $query->row()->email;
             return $result;
         } else {
-            return FALSE;
+            return false;
         }
     }
     
