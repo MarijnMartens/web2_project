@@ -110,6 +110,14 @@ class Login extends CI_Controller {
             return TRUE;
         }
     }
+    
+    public function password_forget($error = NULL){
+         $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+        $bodyData['error'] = $error;
+        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('passwordReset_view', $bodyData);
+        $this->load->view('tmpFooter_view');
+    }
 
     //Forgot password
     public function password_reset($error = NULL) {
@@ -130,26 +138,19 @@ class Login extends CI_Controller {
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
-            $headerData = ['title' => 'Vraag nieuw paswoord aan'];
-            $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
-            $this->load->view('passwordReset_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+            $this->password_forget();
         } else { //First validation is ok
             //Check at least one field is filled
             if ($username == '' && $email == '') {
-                $headerData = ['title' => 'Vraag nieuw paswoord aan'];
-                $bodyData['error'] = 'Vul op zijn minst 1 van de velden in';
-                $this->load->view('tmpHeader_view', $headerData);
-                $this->load->view('passwordReset_view', $bodyData);
-                $this->load->view('tmpFooter_view');
+                $error = 'Vul op zijn minst 1 van de velden in';
+                $this->password_forget($error);
             } else {
                 //Validations both OK, go on with transaction
                 $this->load->model('password_model');
                 $result = $this->password_model->reset($username, $email);
                 if (!$result) { //Model did not insert data in database
-                    $bodyData = ['error' => 'Gebruikersnaam of email adres is fout'];
-                    $this->password_reset($error);
+                    $error = 'Gebruikersnaam of email adres is fout';
+                    $this->password_forget($error);
                 } else {
                     if ($username == '') {
                         //$username = $this->session->flashdata('username');
@@ -165,7 +166,7 @@ class Login extends CI_Controller {
                     );
                     if (!$result) {
                         $error = 'De mailserver is even ziek, probeer later opnieuw';
-                        $this->password_reset($error);
+                        $this->password_forget($error);
                     } else {
                         $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
                     }
