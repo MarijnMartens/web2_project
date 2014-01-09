@@ -22,6 +22,22 @@ class Reply_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
+    //get username corresponing to user_id from replies
+    public function getUsername($user_id){
+        $this->db->select('username');
+        $this->db->from('user');
+        $this->db->where('id', $user_id);
+        $query = $this->db->get();
+        return $query->row()->username;
+    }
+    
+    //get last reply per topic
+    public function getLast($topic_id){
+        $this->db->where('topic_id', $topic_id);
+        $this->db->where("date = (select max(date) FROM reply WHERE topic_id = $topic_id)");
+        $query = $this->db->get('reply');
+        return $query->result();
+    }
     
     //count replies per topic
     public function getCount($topic_id){

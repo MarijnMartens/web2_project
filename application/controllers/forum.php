@@ -3,6 +3,7 @@
 /*
  * Author: Marijn Martens
  * Created on: 29/12/2013
+ * Edit: 09/01/2013 : display timestamp, topicTitle, username/guestid
  * References: none
  */
 
@@ -29,7 +30,14 @@ class Forum extends CI_Controller {
         //Print each section, done this way for counters; #topics, #replies (in all underlying topics combined)
         foreach ($result as $row) {
             $forum_id = $row->id;
-
+            $lastReply_result = $this->lastReply($forum_id);
+            //print title topic where last reply of entire forum is found
+            $topicTitle = $this->topic_model->getTitle($lastReply_result['topic_id']);
+            if ($lastReply_result['user_id'] != 0) {
+                $replyUsername = $this->reply_model->getUsername($lastReply_result['user_id']);
+            } else {
+                $replyUsername = 'Gast' . $lastReply_result['guest_id'];
+            }
             //Rows to print to userscreen
             $result = (
                     '<tr>' .
@@ -37,6 +45,9 @@ class Forum extends CI_Controller {
                     '<td>' . $row->description . '</td>' .
                     '<td>' . $this->countTopics($forum_id) . ' Topics</td>' .
                     '<td>' . $this->countRepliesForum($forum_id) . ' Replies</td>' .
+                    '<td> Laatste reactie in Topic:' . $topicTitle . '</td>' .
+                    '<td> Laatste reactie door Gebruiker: ' . $replyUsername . '</td>' .
+                    '<td> Om Tijd: ' . $lastReply_result['date'] . '</td>' .
                     '</tr>'
                     );
             //Put each row in array
@@ -47,6 +58,27 @@ class Forum extends CI_Controller {
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
+    }
+
+    //get last reply in forum
+    private function lastReply($forum_id) {
+        $dateMax = '';
+        $data = array();
+        $result = $this->topic_model->getAll($forum_id);
+        foreach ($result as $row) {
+            $reply_result = $this->reply_model->getLast($row->id);
+            foreach ($reply_result as $reply) {
+                if ($reply->date > $dateMax) {
+                    $dateMax = $reply->date;
+                    $data = array('topic_id' => $reply->topic_id,
+                        'user_id' => $reply->user_id,
+                        'guest_id' => $reply->guest_id,
+                        'date' => $reply->date
+                    );
+                }
+            }
+        }
+        return $data;
     }
 
     //count all replies in one topic

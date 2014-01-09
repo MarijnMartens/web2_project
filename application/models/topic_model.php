@@ -17,7 +17,15 @@ class Topic_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-
+    
+    public function getTitle($topic_id){
+        $this->db->select('title');
+        $this->db->from('topic');
+        $this->db->where('id', $topic_id);
+        $query = $this->db->get();
+        return $query->row()->title;
+    }
+        
     //return list of topics
     public function getTopics($forum_id) {
         $this->db->select('topic.*, user.username');
@@ -66,6 +74,5 @@ class Topic_model extends CI_Model {
             } else {
                 return FALSE;
             }
-    } 
-
+    }
 }
