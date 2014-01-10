@@ -22,53 +22,57 @@ class Reply_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
+
     //get username corresponing to user_id from replies
-    public function getUsername($user_id){
+    public function getUsername($user_id) {
         $this->db->select('username');
         $this->db->from('user');
         $this->db->where('id', $user_id);
         $query = $this->db->get();
         return $query->row()->username;
     }
-    
+
     //get last reply per topic
-    public function getLast($topic_id){
+    public function getLast($topic_id) {
         $this->db->where('topic_id', $topic_id);
         $this->db->where("date = (select max(date) FROM reply WHERE topic_id = $topic_id)");
         $query = $this->db->get('reply');
-        return $query->result();
+        if ($query->num_rows() == 1) {
+            return $query->result();
+        } else {
+            return false;
+        }
     }
-    
+
     //count replies per topic
-    public function getCount($topic_id){
+    public function getCount($topic_id) {
         $this->db->select('count(*) as count');
         $this->db->from('reply');
         $this->db->where('topic_id', $topic_id);
         $query = $this->db->get();
         return $query->row()->count;
     }
-    
-    public function anonymous(){
-            $guest_id = time() - strtotime('5 January 2014') . microtime() * 1000000;
-            $this->session->set_userdata('guest_id', $guest_id);
-            return $guest_id;
+
+    public function anonymous() {
+        $guest_id = time() - strtotime('5 January 2014') . microtime() * 1000000;
+        $this->session->set_userdata('guest_id', $guest_id);
+        return $guest_id;
     }
-    
-    public function insert($topic_id, $msg, $user_id = 0, $guest_id = 0)
-    {
-         $data = array(
-                'topic_id' => $topic_id,
-                'user_id' => $user_id,
-                'message' => $msg,
-                'guest_id' => $guest_id
-            );
-            $this->db->insert('reply', $data);
-            $query = $this->db->affected_rows();
-            if ($query == 1) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+
+    public function insert($topic_id, $msg, $user_id = 0, $guest_id = 0) {
+        $data = array(
+            'topic_id' => $topic_id,
+            'user_id' => $user_id,
+            'message' => $msg,
+            'guest_id' => $guest_id
+        );
+        $this->db->insert('reply', $data);
+        $query = $this->db->affected_rows();
+        if ($query == 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
     }
 
 }
