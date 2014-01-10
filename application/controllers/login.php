@@ -102,6 +102,8 @@ class Login extends CI_Controller {
     }
 
     //'Admin' is not allowed as username to not confuse other users
+    //Just as an example, in real world scenario I would use a preg_match where I look for
+    //matches between the username and an array full of forbidden words)
     public function register_username_check($str) {
         if (!strcasecmp($str, 'admin')) { //strcasecmp is case insensitive
             $this->form_validation->set_message('username_check', '%s is niet toegelaten als gebruikersnaam');
@@ -112,7 +114,7 @@ class Login extends CI_Controller {
     }
     
     public function password_forget($error = NULL){
-         $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+        $headerData = ['title' => 'Vraag nieuw paswoord aan'];
         $bodyData['error'] = $error;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('passwordReset_view', $bodyData);

@@ -55,7 +55,7 @@ class Reply_model extends CI_Model {
 
     public function anonymous() {
         $guest_id = time() - strtotime('5 January 2014') . microtime() * 1000000;
-        $this->session->set_userdata('guest_id', $guest_id);
+        $this->input->set_cookie('guest_id', $guest_id, 60*60*24*365);
         return $guest_id;
     }
 
@@ -67,6 +67,27 @@ class Reply_model extends CI_Model {
             'guest_id' => $guest_id
         );
         $this->db->insert('reply', $data);
+        $query = $this->db->affected_rows();
+        if ($query == 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    //get data from one reply
+    public function get($reply_id) {
+        $this->db->where('id', $reply_id);
+        $query = $this->db->get('reply');
+        return $query->row();
+    }
+    //update data from one reply
+    public function edit($reply_id, $msg, $mod_break) {
+        $data = array(
+            'message' => $msg,
+            'mod_break' => $mod_break
+        );
+        $this->db->where('id', $reply_id);
+        $this->db->update('reply', $data);
         $query = $this->db->affected_rows();
         if ($query == 1) {
             return TRUE;

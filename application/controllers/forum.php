@@ -3,8 +3,9 @@
 /*
  * Author: Marijn Martens
  * Created on: 29/12/2013
- * Edit: 09/01/2013 : display timestamp, topicTitle, username/guestid
- * References: none
+ * Edit: 09/01/2013 : display timestamp, topicTitle, username/guestid, insert reply
+ * Edit: 10/01/2013: update reply with check
+ * References: All by my pure awesomeness
  */
 
 if (!defined('BASEPATH'))
@@ -244,7 +245,10 @@ class Forum extends CI_Controller {
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
         if ($user_id == NULL) {
-            $guest_id = $this->reply_model->anonymous();
+            if (!($this->input->cookie('guest_id'))) {
+                $guest_id = $this->reply_model->anonymous();
+            } else
+                $guest_id = $this->input->cookie('guest_id');
         }
 
         $this->load->library('form_validation');
@@ -275,6 +279,72 @@ class Forum extends CI_Controller {
                     . ' sure database is up and running?'];
                 $this->insertReply($error);
             } else {
+                $this->replies($topic_id);
+            }
+        }
+    }
+
+    public function editReply($reply_id, $error = NULL) {
+        $headerData = ['title' => 'Edit Reply'];
+        $bodyData['error'] = $error;
+        $result = $this->reply_model->get($reply_id);
+        //closed by admin, stop further processing
+        if ($result->mod_break == TRUE) {
+            $this->session->set_flashdata('message', 'Geen toegang tot aanpassen reply');
+            redirect('welcome/message');
+        } else { //check for URL modification
+            if ($result->user_id != $this->session->userdata('user_id')) {
+                if ($this->session->userdata('level') < 3) {
+                    if ($result->guest_id != $this->input->cookie('guest_id')) {
+                        $this->session->set_flashdata('message', 'Geen toegang tot aanpassen reply');
+                        redirect('welcome/message');
+                    }
+                }
+            }
+        }
+        $reply_message = $result->message;
+        $bodyData['msg'] = $reply_message;
+        $this->session->set_flashdata('reply_id', $reply_id);
+        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('forum/editReply_view', $bodyData);
+        $this->load->view('tmpFooter_view');
+    }
+
+    public function editReplyProcess() {
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+        //Fields we validate
+        $this->form_validation->set_rules(
+                'reply', 'Post', 'required|'
+                . 'min_length[1]|'
+                . 'max_length[1000]|'
+        );
+        //Validation form
+        //Initial page, validation failed
+        if ($this->form_validation->run() == FALSE) {
+            $this->session->keep_flashdata('reply_id');
+            $this->editReply();
+        } else { //Validation is OK, open model to insert new topic
+            $mod_break = FALSE;
+            $reply_id = $this->session->flashdata('reply_id');
+            if ($this->session->userdata('user_id')) {
+                $username = $this->session->userdata('username');
+                if ($this->session->userdata('user_id') != $this->reply_model->get($reply_id)->user_id) {
+                    $mod_break = TRUE;
+                }
+            } else {
+                $username = 'Gast' . $this->input->cookie('guest_id');
+            }
+            $message = '<p>' . $this->input->post('reply') . '</p><h6>Aangepast door: ' . $username . ', op: ' . $date = date('d/m/Y H:i:s', time()) . '</h6>';
+            $result = $this->reply_model->edit(
+                    $reply_id, $message, $mod_break
+            );
+            if (!$result) { //Model did not insert data in database
+                $error = 'Insert in database failed,'
+                        . ' sure database is up and running?';
+                $this->editReply($reply_id, $error);
+            } else {
+                $topic_id = $this->reply_model->get($reply_id)->topic_id;
                 $this->replies($topic_id);
             }
         }
