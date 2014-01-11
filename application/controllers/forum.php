@@ -52,9 +52,9 @@ class Forum extends CI_Controller {
                     '<td>' . $row->description . '</td>' .
                     '<td>' . $this->countTopics($forum_id) . ' Topics</td>' .
                     '<td>' . $this->countRepliesForum($forum_id) . ' Replies</td>' .
-                    '<td> Laatste reactie in Topic: ' . $topicTitle . '</td>' .
-                    '<td> Laatste reactie door Gebruiker: ' . $replyUsername . '</td>' .
-                    '<td> Om Tijd: ' . $lastReplyDate . '</td>' .
+                    '<td> Laatste reactie in topic: ' . $topicTitle . '</td>' .
+                    '<td> Laatste reactie door gebruiker: ' . $replyUsername . '</td>' .
+                    '<td> Laatste reactie om: ' . $lastReplyDate . '</td>' .
                     '</tr>'
                     );
             // }
@@ -136,19 +136,31 @@ class Forum extends CI_Controller {
         //make list of topics
         $result = $this->topic_model->getTopics($forum_id);
         $data[] = NULL;
+        $delete = false;
+        if ($this->session->userdata('level') >= 3 && $this->forum_model->getLevel($forum_id) < $this->session->userdata('level')) {
+            $delete = true;
+        }
         //print each topic
         if ($result != NULL) {
             foreach ($result as $row) {
                 $topic_id = $row->id;
-                $result = (
+                $result;
+                if ($delete == TRUE) {
+                    $result[1] = '<td><a href="' . base_url() . 'forum/deleteTopic/' . $topic_id . '">Verwijder</a></td>';
+                } else {
+                    $result[1] = '';
+                }
+                $result[0] = (
                         '<tr>' .
                         '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a></td>' .
                         '<td>' . $row->date . '</td>' .
                         '<td>' . $row->username . '</td>' .
-                        '<td>' . $this->countReplies($topic_id) . ' Antwoorden</td>' .
+                        '<td>' . $this->countReplies($topic_id) . ' Antwoorden</td>'
+                        );
+                $result[2] = (
                         '</tr>'
                         );
-                $data[] = $result;
+                $data[] = implode('', $result);
             }
         }
 
@@ -159,6 +171,7 @@ class Forum extends CI_Controller {
         //display page
         $bodyData['topics'] = $data;
         $bodyData['count'] = $count;
+        $this->session->set_flashdata('forum_id', $forum_id);
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/topic_view', $bodyData);
         $this->load->view('tmpFooter_view');
@@ -189,7 +202,7 @@ class Forum extends CI_Controller {
             $this->form_validation->set_rules(
                     'reply', 'OP', 'required|'
                     . 'min_length[2]|'
-                    . 'max_length[1000]|'
+                    . 'max_length[2000]|'
             );
 
             //Validation form
@@ -202,7 +215,7 @@ class Forum extends CI_Controller {
                 $forum_id = $this->session->keep_flashdata('forum_id');
             } else { //Validation is OK, open model to insert new topic
                 $result_topic = $this->topic_model->insert(
-                        $forum_id, $user_id, $this->input->post('title')
+                        $forum_id, $user_id, ucfirst($this->input->post('title'))
                 );
                 if (!$result_topic) { //Model did not insert data in database
                     $bodyData = ['error' => 'Insert in topic-table failed,'
@@ -240,8 +253,9 @@ class Forum extends CI_Controller {
         $this->load->view('tmpFooter_view');
     }
 
+    //insert new reply
     public function insertReply($error = NULL) {
-        $topic_id = $this->session->flashdata('topic_id');
+        $topic_id = $this->session->flashdata('topic_id');        
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
         if ($user_id == NULL) {
@@ -258,7 +272,7 @@ class Forum extends CI_Controller {
         $this->form_validation->set_rules(
                 'reply', 'Post', 'required|'
                 . 'min_length[2]|'
-                . 'max_length[1000]|'
+                . 'max_length[2000]|'
         );
 
         //Validation form
@@ -272,7 +286,7 @@ class Forum extends CI_Controller {
         } else { //Validation is OK, open model to insert new topic
             $this->load->model('reply_model');
             $result = $this->reply_model->insert(
-                    $topic_id, $this->input->post('reply'), $user_id, $guest_id
+                    $topic_id, ucfirst($this->input->post('reply')), $user_id, $guest_id
             );
             if (!$result) { //Model did not insert data in database
                 $bodyData = ['error' => 'Insert in database failed,'
@@ -284,6 +298,7 @@ class Forum extends CI_Controller {
         }
     }
 
+    //edit existing reply
     public function editReply($reply_id, $error = NULL) {
         $headerData = ['title' => 'Edit Reply'];
         $bodyData['error'] = $error;
@@ -302,14 +317,22 @@ class Forum extends CI_Controller {
                 }
             }
         }
+        //subtract te modified message from text before showing
         $reply_message = $result->message;
+        $message_newPosChange = strpos($reply_message, '<h6>Aangepast door: ');
+        if($message_newPosChange > 0){
+        $reply_message = substr_replace($reply_message, '', $message_newPosChange);
+        }
+        //display form
         $bodyData['msg'] = $reply_message;
         $this->session->set_flashdata('reply_id', $reply_id);
+        $this->session->set_flashdata('message_old', $reply_message);
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/editReply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
+    //push edited reply to database
     public function editReplyProcess() {
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
@@ -317,12 +340,13 @@ class Forum extends CI_Controller {
         $this->form_validation->set_rules(
                 'reply', 'Post', 'required|'
                 . 'min_length[1]|'
-                . 'max_length[1000]|'
+                . 'max_length[2100]|'
         );
         //Validation form
         //Initial page, validation failed
         if ($this->form_validation->run() == FALSE) {
             $this->session->keep_flashdata('reply_id');
+            $this->session->keep_flashdata('message_old');
             $this->editReply();
         } else { //Validation is OK, open model to insert new topic
             $mod_break = FALSE;
@@ -335,9 +359,10 @@ class Forum extends CI_Controller {
             } else {
                 $username = 'Gast' . $this->input->cookie('guest_id');
             }
-            $message = '<p>' . $this->input->post('reply') . '</p><h6>Aangepast door: ' . $username . ', op: ' . $date = date('d/m/Y H:i:s', time()) . '</h6>';
+            $reply_message = $this->input->post('reply');
+            $message = $reply_message . '<h6>Aangepast door: ' . $username . ', op: ' . $date = date('d/m/Y H:i:s', time()) . '</h6>';
             $result = $this->reply_model->edit(
-                    $reply_id, $message, $mod_break
+                    $reply_id, ucfirst($message), $mod_break, $this->session->flashdata('message_old')
             );
             if (!$result) { //Model did not insert data in database
                 $error = 'Insert in database failed,'
@@ -349,5 +374,38 @@ class Forum extends CI_Controller {
             }
         }
     }
-
+    //Send confirmation to delete topic
+    public function deleteTopic($topic_id)
+    {
+         $headerData = ['title' => 'Delete topic'];
+         $bodyData['topic_title'] = $this->topic_model->getTitle($topic_id);
+         $this->session->set_flashdata('topic_id', $topic_id);
+            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('forum/deleteTopic_view', $bodyData);
+            $this->load->view('tmpFooter_view');
+    }
+    //Process deletion of topic
+    public function deleteTopicProcess(){
+        $topic_id = $this->session->flashdata('topic_id');
+        $result = $this->topic_model->delete($topic_id);
+        if(!$result){
+            $this->session->set_flashdata('message', 'Deleten topic was momenteel niet mogelijk');
+            redirect('welcome/message');
+        } else {
+            $this->index();
+        }
+    }
+    
+    public function closeTopic($topic_id)
+    {
+        $result = $this->topic_model->close($topic_id);
+        if(!$result){
+            $this->session->set_flashdata('message', 'Topic sluiten mislukt');
+            redirect('welcome/message');
+        } else {
+            $this->index();
+        }
+    }
+    
 }
+

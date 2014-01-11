@@ -8,7 +8,7 @@
     </tr>
     <tr>
         <td><label for="reply">Open post</label></td>
-        <td><textarea name="reply" value="<?php echo set_value('reply'); ?>" rows="4" cols="50"></textarea></td>
+        <td><textarea name="reply" rows="10" cols="80" wrap="soft"><?php echo set_value('reply'); ?></textarea></td>
         <td><?php echo form_error('reply'); ?></td>
     </tr>
     <tr>

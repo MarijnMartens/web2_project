@@ -81,10 +81,11 @@ class Reply_model extends CI_Model {
         return $query->row();
     }
     //update data from one reply
-    public function edit($reply_id, $msg, $mod_break) {
+    public function edit($reply_id, $msg, $mod_break, $msg_old) {
         $data = array(
             'message' => $msg,
-            'mod_break' => $mod_break
+            'mod_break' => $mod_break,
+            'message_old' => $msg_old
         );
         $this->db->where('id', $reply_id);
         $this->db->update('reply', $data);

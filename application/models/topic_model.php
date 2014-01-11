@@ -17,7 +17,7 @@ class Topic_model extends CI_Model {
     function __construct() {
         parent::__construct();
     }
-
+    //get title of given topic
     public function getTitle($topic_id) {
         $this->db->select('title');
         $this->db->from('topic');
@@ -30,6 +30,16 @@ class Topic_model extends CI_Model {
             return false;
         }
     }
+    //get all data from one topic
+    public function getData($topic_id){
+        $this->db->where('id', $topic_id);
+        $query = $this->db->get();
+        if ($query->num_rows() == 1) {
+            return $query->row();
+        } else {
+            return false;
+        }
+    }
 
     //return list of topics
     public function getTopics($forum_id) {
@@ -37,7 +47,7 @@ class Topic_model extends CI_Model {
         $this->db->from('topic');
         $this->db->join('user', 'topic.user_id = user.id');
         $this->db->where('topic.forum_id', $forum_id);
-        $this->db->where('topic.status', 1);
+        //$this->db->where('topic.status', 1);
         $this->db->order_by('topic.date', 'desc');
         $query = $this->db->get();
         return $query->result();
@@ -81,6 +91,37 @@ class Topic_model extends CI_Model {
             $this->db->from('topic');
             $query = $this->db->get();
             return $query->row()->max_id;
+        } else {
+            return FALSE;
+        }
+    }
+    //delete given topic
+    public function delete($topic_id) {
+        $this->db->where('id', $topic_id);
+        $this->db->delete('topic');
+        $query = $this->db->affected_rows();
+        if ($query == 1) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+    //close (read-only) give topic
+    public function close($topic_id){
+        $title = $this->getTitle($topic_id);
+        if(!$title)
+        {
+            return FALSE;
+        }
+        $data = array(
+            'title' => "[Gesloten] $title",
+            'status' => '0'
+        );
+        $this->db->where('id', $topic_id);
+        $this->db->update('topic', $data);
+        $query = $this->db->affected_rows();
+        if ($query == 1) {
+            return TRUE;
         } else {
             return FALSE;
         }

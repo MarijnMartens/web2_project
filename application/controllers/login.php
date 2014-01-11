@@ -90,7 +90,7 @@ class Login extends CI_Controller {
         } else { //Validation is OK, open model to insert new user
             $this->load->model('register_model');
             $result = $this->register_model->setUsers(
-                    $this->input->post('username'), $this->input->post('password'), $this->input->post('email')
+            ucfirst($this->input->post('username')), $this->input->post('password'), $this->input->post('email')
             );
             if (!$result) { //Model did not insert data in database
                 $bodyData = ['error' => 'Invoer in database is mislukt'];
