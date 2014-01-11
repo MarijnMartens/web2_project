@@ -1,10 +1,8 @@
 <?php
 
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- * 8/01/14
+ * Author: Marijn
+ * Created on: 07/01/2014
  */
 
 $lang['required']			= "%s is verplicht";

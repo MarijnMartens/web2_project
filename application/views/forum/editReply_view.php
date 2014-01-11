@@ -1,4 +1,10 @@
 <?php 
+
+/*
+ * Author: Marijn
+ * Created on: 09/01/2014
+ */
+
 $this->load->helper('form');
 echo form_open('forum/editReplyProcess'); ?>
 <?php if (!is_null($error)){ echo "<span class='error'>$error</span><br/>"; }?>

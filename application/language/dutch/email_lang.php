@@ -1,5 +1,10 @@
 <?php
 
+/*
+ * Author: Marijn
+ * Created on: 07/01/2014
+ */
+
 $lang['email_must_be_array'] = "The email validation method must be passed an array.";
 $lang['email_invalid_address'] = "%s is geen geldig email adres";
 $lang['email_attachment_missing'] = "Unable to locate the following email attachment: %s";

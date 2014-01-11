@@ -10,7 +10,7 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class BaseController extends CI_Controller {
-
+    //check if user is logged in, else redirect to login-page
     function BaseController() {
         parent::__construct();
         if (!$this->session->userdata('validated')) {

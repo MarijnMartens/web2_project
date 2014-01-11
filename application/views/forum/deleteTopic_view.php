@@ -1,4 +1,10 @@
-<?php 
+<?php
+
+/*
+ * Author: Marijn
+ * Created on: 10/01/2014
+ */
+
 $this->load->helper('form');
 echo form_open('forum/deleteTopicProcess'); ?>
 <table>

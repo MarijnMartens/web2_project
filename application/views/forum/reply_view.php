@@ -1,3 +1,9 @@
+<!-- 
+Author: Marijn
+Created on: 04/01/2014
+References: none
+-->
+
 <h1>Replies</h1>
 <p><a href="<?php echo base_url('forum/insertReply'); ?>">Insert new reply</a></p>
 <table border='1'>

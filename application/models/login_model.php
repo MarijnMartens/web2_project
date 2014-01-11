@@ -1,10 +1,12 @@
 <?php
 
+/*
+ * Author: Marijn
+ * Created on: 22-12-2013
+ */
+
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-/* Author: Jorge Torres
- * Description: Login model class
- */
 
 class Login_model extends CI_Model {
 
@@ -32,6 +34,26 @@ class Login_model extends CI_Model {
         // If the previous process did not validate
         // then return false.
         return false;
+    }
+    
+    public function getUserdata($user_id){
+        $this->db->where('id', $user_id);
+        $query = $this->db->get('user');
+        // Let's check if there are any results
+        if ($query->num_rows() == 1) {
+            $row = $query->row();
+            $data = array(
+            'fName' => $row->fName,
+            'lName' => $row->lName,
+            'dateOfBirth' => $row->dateOfBirth,
+            'gender' => $row->gender,
+            'city' => $row->city
+            );
+            return $data;
+        } else {
+            return false;
+        }
+        
     }
     
     

@@ -1,3 +1,9 @@
+<!-- 
+Author: Marijn
+Created on: 10/01/2014
+References: none
+-->
+
 <?php echo form_open('forum/insertTopic'); ?>
 <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
 <table>

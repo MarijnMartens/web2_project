@@ -57,7 +57,7 @@ References: none
                 </ul>
 
                 <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
-                    <li>settings</li>
+                    <li><a href="<?php echo base_url('profile/view'); ?>">Settings</a></li>
                     <li>messenger</li>
                     <li>member list</li>
                     <li>notifications</li>
