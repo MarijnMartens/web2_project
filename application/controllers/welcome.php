@@ -106,7 +106,7 @@ class Welcome extends CI_Controller {
             } else {
                 //Mocht deze email mislukken is dat niet erg, is maar een bevestinging dat er een mail verzonden was
                 $result = $this->email_model->mail(
-                    'contact@hexioners.be', 'VOS@50eten', 'do-not-reply@hexioners.be', $this->input->post('email'), 
+                    'do-not-reply@hexioners.be', 'VOS@50eten', 'do-not-reply@hexioners.be', $this->input->post('email'), 
                     'Je contact: ' . $this->input->post('subject') . ' ',
                     'Hallo ' . ucfirst($this->input->post('name')) . ',</br>' . 'Hieronderzie je nog eens je bericht die je verzonden hebt, tot binnenkort!</br>' . $this->input->post('message')
                             );
