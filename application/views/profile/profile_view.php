@@ -14,8 +14,8 @@ if (!defined('BASEPATH'))
 <?php
     echo 'Voornaam ' . $userdata['fName'] . '<br/>';
     echo 'Achternaam ' . $userdata['lName'] . '<br/>';
-    echo 'Leeftijd ' . $userdata['dateOfBirth'] . '<br/>';
-  //      echo 'Geslacht ' . $userdata['gender'] . '<br/>';
+    echo 'Geboortedatum ' . $userdata['dateOfBirth'] . '<br/>';
+    echo 'Geslacht ' . $userdata['gender'] . '<br/>';
     echo 'Regio ' . $userdata['city'] . '<br/>';
 ?>
 

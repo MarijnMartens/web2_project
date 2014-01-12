@@ -59,7 +59,7 @@ References: none
                 <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
                     <li><a href="<?php echo base_url('profile/view'); ?>">Settings</a></li>
                     <li>messenger</li>
-                    <li>member list</li>
+                    <li><a href="<?php echo base_url('profile/all'); ?>">Ledenlijst</a></li>
                     <li>notifications</li>
                     <li><a href="<?php echo base_url('login/logout'); ?>">Logout</a></li>
                 </ul>
@@ -67,8 +67,8 @@ References: none
                 <ul id="menu">
                     <li><a href="<?php echo base_url('welcome/index'); ?>">Startpagina</a></li>
                     <li><a href="<?php echo base_url('forum/index'); ?>">Forum</a></li>
-                    <li>Evenementen</li>
+                    <li><a href="<?php echo base_url('event/view'); ?>">Evenementen</a></li>
                     <li><a href="<?php echo base_url('welcome/info'); ?>">Info</a></li>
-                    <li>Contact</li>
+                    <li><a href="<?php echo base_url('welcome/contact'); ?>">Contact</a></li>
                 </ul>
         </header>

@@ -6,13 +6,10 @@
     </head>
     <body>
         <?php
-        echo $tijd = (time() - strtotime('5 January 2014') . (microtime() * 1000000));
-        echo '<br/>';
-        echo time();
-        echo '<br/>';
-        echo microtime()* 1000000;
-        echo '<br/>';
-        echo time() - strtotime('5 January 2014');
+        for($i = date('Y')-16; $i >= date('Y')-70; $i--)
+        {
+            echo "'$i', ";
+        }
         ?>
     </body>
 </html>

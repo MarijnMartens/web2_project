@@ -44,13 +44,9 @@ class Profile extends BaseController {
             'id' => 'lName',
             'value' => $userdata['lName']
         );
-        $dateOfBirth = array(
-            'name' => 'dateOfBirth',
-            'id' => 'dateOfBirth',
-            'value' => $userdata['dateOfBirth']
-        );
+        $dateOfBirth = $userdata['dateOfBirth'];
         //Check gender
-        if ($userdata['gender'] = 'm') {
+        if ($userdata['gender'] == 'm') {
             $sexM = true;
             $sexF = false;
         } else {
@@ -80,8 +76,8 @@ class Profile extends BaseController {
             'fName' => $fName,
             'lName' => $lName,
             'dateOfBirth' => $dateOfBirth,
-           /* 'genderM' => $genderM,
-            'genderF' => $genderF,*/
+            'genderM' => $genderM,
+            'genderF' => $genderF,
             'city' => $city
         );
         $this->load->view('tmpHeader_view', $headerData);
@@ -124,7 +120,7 @@ class Profile extends BaseController {
                     $this->input->post('fName'),
                     $this->input->post('lName'),
                     $this->input->post('dateOfBirth'),
-                   $gender = null,
+                    $this->input->post('gender'),
                     $this->input->post('city'));
             if (!$result) { //Model did not insert data in database
                 $error = 'Invoer in database is mislukt';
