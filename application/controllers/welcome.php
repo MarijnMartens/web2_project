@@ -97,19 +97,13 @@ class Welcome extends CI_Controller {
                     'contact@hexioners.be', 'VOS@50eten', 'contact@hexioners.be', 
                     'contact@hexioners.be', 'Contact Hexioners.be ' . $this->input->post('subject'),
                     'Geschreven door: ' . ucfirst($this->input->post('name')) . '</br>'
-                    . 'Email: ' . $this->input->post('email') . '<br/>'
+                    . 'Email: <a href="mailto:' . $this->input->post('email') . '">Send back</a><br/>'
                     . $this->input->post('message')
                             );
             if (!$result) { //Model did not insert data in database
                 $error = 'Bericht kon niet verzonden worden, probeer het zodadelijk nogmaals';
                 $this->contact($error);
             } else {
-                //Mocht deze email mislukken is dat niet erg, is maar een bevestinging dat er een mail verzonden was
-                /*$result = $this->email_model->mail(
-                    'do-not-reply@hexioners.be', 'VOS@50eten', 'do-not-reply@hexioners.be', $this->input->post('email'), 
-                    'Je contact: ' . $this->input->post('subject') . ' ',
-                    'Hallo ' . ucfirst($this->input->post('name')) . ',</br>' . 'Hieronderzie je nog eens je bericht die je verzonden hebt, tot binnenkort!</br>' . $this->input->post('message')
-                            );*/
                 $this->session->set_flashdata('message', 'Bericht verzonden, je krijgt ASAP een antwoord');
                 redirect('welcome/message');
             }
