@@ -12,7 +12,7 @@ References: none
         <meta charset="UTF-8">
         <title><?PHP echo $title; ?></title>
         <link rel="icon" href="../../assets/images/logo.ico" type="image/x-icon">
-        <?PHP echo link_tag('../assets/css/layout.css'); ?>
+        <?PHP echo link_tag("../../assets/css/layout.css"); ?>
         <!-- Download jquery if not on computer -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
         </script>
