@@ -11,7 +11,7 @@ References: none
     <head>
         <meta charset="UTF-8">
         <title><?PHP echo $title; ?></title>
-        <link rel="icon" href="../assets/images/logo.ico" type="image/x-icon">
+        <?PHP echo link_tag('assets/images/logo.ico', 'shortcut icon', 'image/ico'); ?>
         <?PHP echo link_tag("assets/css/layout.css"); ?>
         <!-- Download jquery if not on computer -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js">
@@ -50,7 +50,7 @@ References: none
     </head>
     <body>
         <header>
-            <a href="<?php echo base_url('welcome/index'); ?>"><img src="../../assets/images/logo.png" alt="logo" height="100"/><a/>
+            <a href="<?php echo base_url('welcome/index'); ?>"><img src="../assets/images/logo.png" alt="logo" height="100"/><a/>
                 <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
                     <li><a href="<?php echo base_url('login/index'); ?>">Login</a></li>
                     <li><a href="<?php echo base_url('login/register'); ?>">Registreer</a></li>
