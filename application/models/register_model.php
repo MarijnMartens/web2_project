@@ -34,26 +34,19 @@ class Register_model extends CI_Model {
         }
     }
 
-    function editProfile($user_id, $fName = null, $lName = null, $dateOfBirth = null, $gender = null, $city = null) {
+    function editProfile($user_id, $fName = null, $lName = null, $dateOfBirth, $gender = null, $city = null) {
         $data = array(
-            'fName' => $fName,
-            'lName' => $lName,
+            'fName' => ucfirst($fName),
+            'lName' => ucfirst($lName),
             'dateOfBirth' => $dateOfBirth,
             'gender' => $gender,
-            'city' => $city
+            'city' => ucfirst($city)
         );
         $this->db->where('id', $user_id);
         $this->db->update('user', $data);
         $query = $this->db->affected_rows();
 
-        if ($query == 1) {
-            $data = array(
-                'fName' => $fName,
-                'lName' => $lName,
-                'dateOfBirth' => $dateOfBirth,
-                'gender' => $gender,
-                'city' => $city
-            );
+        if ($query == 1 || $query == 0) {
             return TRUE;
         } else {
             return FALSE;
