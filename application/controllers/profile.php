@@ -21,10 +21,9 @@ class Profile extends BaseController {
             $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
             redirect('welcome/message');
         }
-        
         //insert all userdata in flash
         $this->session->set_flashdata('userdata', $bodyData['userdata']);
-
+        //Display profilepage
         $headerData = ['title' => 'Profile'];
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('profile/profile_view', $bodyData);
@@ -33,7 +32,9 @@ class Profile extends BaseController {
 
     //edit non-critical user information
     public function edit($error = NULL) {
+        //get all data from view 
         $userdata = $this->session->flashdata('userdata');
+        //prepare form fields, fill value where provided
         $fName = array(
             'name' => 'fName',
             'id' => 'fName',
@@ -45,7 +46,7 @@ class Profile extends BaseController {
             'value' => $userdata['lName']
         );
         $dateOfBirth = $userdata['dateOfBirth'];
-        //Check gender
+        //Fill radiogroup gender
         if ($userdata['gender'] == 'm') {
             $sexM = true;
             $sexF = false;
@@ -114,14 +115,25 @@ class Profile extends BaseController {
         if ($this->form_validation->run() == FALSE) {
             $this->edit();
         } else {
+            $fName = $this->input->post('fName');
+            $lName = $this->input->post('lName');
+            $day = $this->input->post('day');
+            $month = $this->input->post('month');
+            $year = $this->input->post('year');
+            $gender = $this->input->post('gender');
+            $city = $this->input->post('city');
+            $dateOfBirth = array($year, $month, $day);
+            $dateOfBirth = implode('-', $dateOfBirth);
+            //process changes
             $this->load->model('register_model');
             $result = $this->register_model->editProfile(
                     $this->session->userdata('user_id'),
-                    $this->input->post('fName'),
-                    $this->input->post('lName'),
-                    $this->input->post('dateOfBirth'),
-                    $this->input->post('gender'),
-                    $this->input->post('city'));
+                    $fName,
+                    $lName,
+                    $dateOfBirth,
+                    $gender,
+                    $city
+                    );
             if (!$result) { //Model did not insert data in database
                 $error = 'Invoer in database is mislukt';
                 $this->edit($error);

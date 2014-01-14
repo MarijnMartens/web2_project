@@ -13,11 +13,11 @@ if (!defined('BASEPATH'))
 <?php
 $this->load->helper('form');
 $this->load->helper('date');
-$days = array(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
-$months = array('Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December');
+$days = array(1 => 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31);
+$months = array(1 => 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December');
 for($i = date('Y')-16; $i >= date('Y')-70; $i--)
         {
-            $years[] = $i;
+            $years[$i] = $i;
         }
 
 echo form_open('profile/save');
@@ -41,6 +41,10 @@ echo form_label('Locatie', 'city');
 echo form_input($userdata['city']);
 echo '<br/>';
 echo form_submit('submit', 'Pas gegevens aan');
-echo form_reset('reset', 'Annuleer');
 echo form_close();
+//Do not change anyting
+echo form_open('profile/view');
+echo form_submit('cancel', 'Annuleer');
+echo form_close();
+
 ?>

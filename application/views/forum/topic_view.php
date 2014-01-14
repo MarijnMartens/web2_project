@@ -5,7 +5,7 @@ References: none
 -->
 
 <h1>Topics</h1>
-<p><a href="<?php echo base_url('forum/insertTopic'); ?>">Maak een nieuw topic aan</a></p>
+<p><a href="<?php echo base_url('forum/insertTopic'); ?>">Nieuw topic</a></p>
 <table border='1'>
     <?php echo "$count Topics"; ?>
     <?php
@@ -14,4 +14,3 @@ References: none
     }
     ?>
 </table>
-<p><a href="<?php echo base_url('forum/insertTopic'); ?>">Maak een nieuw topic aan</a></p>
