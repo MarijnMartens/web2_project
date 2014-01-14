@@ -23,27 +23,31 @@ class Forum extends CI_Controller {
 
     //Main Forum - Lists different sections: Guests (i.e. FAQ, Guestbook) / Users / Hexioners / Admins
     public function index() {
+        //Prepare title for webpage
         $headerData = ['title' => 'Forum'];
         //Get all sections from database where level is equal or higher
+        //Only forums are shown when userlevel >= forumlevel
         $level = $this->session->userdata('level');
         $result = $this->forum_model->getForums($level);
-
-        //Print each section, done this way for counters; #topics, #replies (in all underlying topics combined)
+        //Check if all data is available otherwise display unknown
         foreach ($result as $row) {
             $forum_id = $row->id;
-            $lastReply_result = $this->lastReply($forum_id);
+            //Get data regarding last submitted reply somewhere in a topic in the forum
+            $lastReply_result = $this->lastReplyForum($forum_id);
             //if no topics in forum
             if (!$lastReply_result) {
+                //display unknown = 'Onbekend'
                 $topicTitle = $replyUsername = $lastReplyDate = 'Onbekend';
-            } else {
+            } else { //there are topics in forum, display data
                 //print title topic where last reply of entire forum is found
-                $topicTitle = $this->topic_model->getTitle($lastReply_result['topic_id']);
-                if ($lastReply_result['user_id'] != 0) {
-                    $replyUsername = $this->reply_model->getUsername($lastReply_result['user_id']);
+                $topicTitle = $this->topic_model->getData($lastReply_result->topic_id)->title;
+                //a reply could be submitted by either a registered user or a guest, verify which of the 2
+                if ($lastReply_result->user_id != 0) {
+                    $replyUsername = $this->reply_model->getUsername($lastReply_result->user_id);
                 } else {
-                    $replyUsername = 'Gast' . $lastReply_result['guest_id'];
+                    $replyUsername = 'Gast' . $lastReply_result->guest_id;
                 }
-                $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result['date']));
+                $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result->date));
             }
             //Rows to print to userscreen
             $result = (
@@ -67,87 +71,7 @@ class Forum extends CI_Controller {
         $this->load->view('forum/forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-
-    //get last reply in topic
-    private function lastReplyTopic($topic_id) {
-        $result = $this->reply_model->getLast($topic_id);
-        if ($result) {
-            $dateMax = '';
-            foreach ($result as $reply) {
-                if ($reply->date > $dateMax) {
-                    $dateMax = $reply->date;
-                    $data = array('user_id' => $reply->user_id,
-                        'guest_id' => $reply->guest_id,
-                        'date' => $reply->date
-                    );
-                }
-            }
-            return $data;
-        } else {
-            return false;
-        }
-    }
-
-    //get last reply in forum
-    private function lastReply($forum_id) {
-        $dateMax = '';
-        $data = array();
-        $result = $this->topic_model->getAll($forum_id);
-        if ($result) {
-            foreach ($result as $row) {
-                $reply_result = $this->reply_model->getLast($row->id);
-                foreach ($reply_result as $reply) {
-                    if ($reply->date > $dateMax) {
-                        $dateMax = $reply->date;
-                        $data = array('topic_id' => $reply->topic_id,
-                            'user_id' => $reply->user_id,
-                            'guest_id' => $reply->guest_id,
-                            'date' => $reply->date
-                        );
-                    }
-                }
-            }
-            return $data;
-        } else {
-            return false;
-        }
-    }
-
-    //count all replies in one topic
-    private function countReplies($topic_id) {
-        $result = $this->reply_model->getCount($topic_id) - 1;
-        return $result;
-    }
-
-    //Function for index to count all replies from all sub-topics
-    private function countRepliesForum($forum_id) {
-        $result = $this->topic_model->getAll($forum_id);
-        $count = 0;
-        if (!$result) {
-            return $count;
-        }
-        foreach ($result as $row) {
-            $count += $this->reply_model->getCount($row->id) - 1;
-        }
-        return $count;
-    }
-
-    //count all topics
-    private function countTopics($forum_id) {
-        $count = $this->topic_model->getCount($forum_id);
-        return $count;
-    }
-
-    //security measure to disable modifying URL
-    private function checkLevel($forum_id) {
-        $user_level = $this->session->userdata('level');
-        $forum_level = $this->forum_model->getLevel($forum_id);
-        if ($user_level < $forum_level) {
-            $this->session->set_flashdata('message', 'Gasten mogen niet in dit forum!');
-            redirect('welcome/message');
-        }
-    }
-
+    
     //display list of topics, more or less like function 'index'
     public function topics($forum_id) {
         //Set flashdata to remember forum_id when creating a new topic
@@ -413,7 +337,7 @@ class Forum extends CI_Controller {
     //Send confirmation to delete topic
     public function deleteTopic($topic_id) {
         $headerData = ['title' => 'Delete topic'];
-        $bodyData['topic_title'] = $this->topic_model->getTitle($topic_id);
+        $bodyData['topic_title'] = $this->topic_model->getData($topic_id)->title;
         $this->session->set_flashdata('topic_id', $topic_id);
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/deleteTopic_view', $bodyData);
@@ -441,5 +365,86 @@ class Forum extends CI_Controller {
             $this->index();
         }
     }
+    
+    //get last reply in topic
+    private function lastReplyTopic($topic_id) {
+        $result = $this->reply_model->getLast($topic_id);
+        if ($result) {
+            $dateMax = '';
+            foreach ($result as $reply) {
+                if ($reply->date > $dateMax) {
+                    $dateMax = $reply->date;
+                    $data = array('user_id' => $reply->user_id,
+                        'guest_id' => $reply->guest_id,
+                        'date' => $reply->date
+                    );
+                }
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    //get last reply in forum
+    private function lastReplyForum($forum_id) {
+        //get all topic_id's as an array
+        $result = $this->topic_model->getAll($forum_id);
+        if ($result) { //there are topics
+            //variable to hold latest date
+            $dateMax = '';
+            //transverse topics
+            foreach ($result as $row) {
+                //get latest reply data for each topic
+                $reply = $this->reply_model->getLast($row->id);
+                //Check if last-reply in last-topic is newer than earlier topics
+                    if ($reply->date > $dateMax) {
+                        //reset dateMax to current date
+                        $dateMax = $reply->date;
+                        //fill return array with data current reply
+                        $data = $reply;
+                    }
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    //count all replies in one topic
+    private function countReplies($topic_id) {
+        $result = $this->reply_model->getCount($topic_id) - 1;
+        return $result;
+    }
+
+    //Function for index to count all replies from all sub-topics
+    private function countRepliesForum($forum_id) {
+        $result = $this->topic_model->getAll($forum_id);
+        $count = 0;
+        if (!$result) {
+            return $count;
+        }
+        foreach ($result as $row) {
+            $count += $this->reply_model->getCount($row->id) - 1;
+        }
+        return $count;
+    }
+
+    //count all topics
+    private function countTopics($forum_id) {
+        $count = $this->topic_model->getCount($forum_id);
+        return $count;
+    }
+
+    //security measure to disable modifying URL
+    private function checkLevel($forum_id) {
+        $user_level = $this->session->userdata('level');
+        $forum_level = $this->forum_model->getLevel($forum_id);
+        if ($user_level < $forum_level) {
+            $this->session->set_flashdata('message', 'Gasten mogen niet in dit forum!');
+            redirect('welcome/message');
+        }
+    }
+
 
 }
