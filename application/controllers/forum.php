@@ -34,7 +34,7 @@ class Forum extends CI_Controller {
             $lastReply_result = $this->lastReply($forum_id);
             //if no topics in forum
             if (!$lastReply_result) {
-                $topicTitle = $replyUsername = $lastReplyDate = 'onbekend';
+                $topicTitle = $replyUsername = $lastReplyDate = 'Onbekend';
             } else {
                 //print title topic where last reply of entire forum is found
                 $topicTitle = $this->topic_model->getTitle($lastReply_result['topic_id']);
@@ -43,18 +43,18 @@ class Forum extends CI_Controller {
                 } else {
                     $replyUsername = 'Gast' . $lastReply_result['guest_id'];
                 }
-                $lastReplyDate = $lastReply_result['date'];
+                $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result['date']));
             }
             //Rows to print to userscreen
             $result = (
                     '<tr>' .
-                    '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->title . '</a></td>' .
-                    '<td>' . $row->description . '</td>' .
-                    '<td>' . $this->countTopics($forum_id) . ' Topics</td>' .
-                    '<td>' . $this->countRepliesForum($forum_id) . ' Replies</td>' .
-                    '<td> Laatste reactie in topic: ' . $topicTitle . '</td>' .
-                    '<td> Laatste reactie door gebruiker: ' . $replyUsername . '</td>' .
-                    '<td> Laatste reactie om: ' . $lastReplyDate . '</td>' .
+                    '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->title . '</a><br/>' .
+                    $row->description . '</td>' .
+                    '<td><b>' . $this->countTopics($forum_id) . '</b> topics<br/><b>' .
+                    $this->countRepliesForum($forum_id) . '</b> antwoorden</td>' .
+                    '<td>' . $topicTitle . '<br/>' .
+                    'Door: <b>' . $replyUsername . '</b><br/>' .
+                    $lastReplyDate . '</td>' .
                     '</tr>'
                     );
             // }
@@ -66,6 +66,26 @@ class Forum extends CI_Controller {
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
+    }
+
+    //get last reply in topic
+    private function lastReplyTopic($topic_id) {
+        $result = $this->reply_model->getLast($topic_id);
+        if ($result) {
+            $dateMax = '';
+            foreach ($result as $reply) {
+                if ($reply->date > $dateMax) {
+                    $dateMax = $reply->date;
+                    $data = array('user_id' => $reply->user_id,
+                        'guest_id' => $reply->guest_id,
+                        'date' => $reply->date
+                    );
+                }
+            }
+            return $data;
+        } else {
+            return false;
+        }
     }
 
     //get last reply in forum
@@ -144,18 +164,33 @@ class Forum extends CI_Controller {
         if ($result != NULL) {
             foreach ($result as $row) {
                 $topic_id = $row->id;
-                $result;
+                $lastReply_result = $this->lastReplyTopic($topic_id);
+                //if no replies in topic
+                if (!$lastReply_result) {
+                    $replyUsername = $lastReplyDate = 'Onbekend';
+                } else {
+                    if ($lastReply_result['user_id'] != 0) {
+                        $replyUsername = $this->reply_model->getUsername($lastReply_result['user_id']);
+                    } else {
+                        $replyUsername = 'Gast' . $lastReply_result['guest_id'];
+                    }
+                    $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result['date']));
+            }
                 if ($delete == TRUE) {
                     $result[1] = '<td><a href="' . base_url() . 'forum/deleteTopic/' . $topic_id . '">Verwijder</a></td>';
                 } else {
                     $result[1] = '';
                 }
+                $startTopicDate = strtotime($row->date);
                 $result[0] = (
                         '<tr>' .
-                        '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a></td>' .
-                        '<td>' . $row->date . '</td>' .
-                        '<td>' . $row->username . '</td>' .
-                        '<td>' . $this->countReplies($topic_id) . ' Antwoorden</td>'
+                        '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a><br/>' .
+                        'Aangemaakt: <b>' . $row->username . '</b><br/>' .
+                        date('d/m/Y H:i', $startTopicDate) . '</td>' .
+                        '<td><b>' . '#<b/> bezocht<br/>' .
+                        '<b>' . $this->countReplies($topic_id) . '<b/> antwoorden</td>' .
+                        '<td>Door: <b>' . $replyUsername . '</b><br/>' .
+                        $lastReplyDate . '</td>'
                         );
                 $result[2] = (
                         '</tr>'
@@ -255,7 +290,7 @@ class Forum extends CI_Controller {
 
     //insert new reply
     public function insertReply($error = NULL) {
-        $topic_id = $this->session->flashdata('topic_id');        
+        $topic_id = $this->session->flashdata('topic_id');
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
         if ($user_id == NULL) {
@@ -320,8 +355,8 @@ class Forum extends CI_Controller {
         //subtract te modified message from text before showing
         $reply_message = $result->message;
         $message_newPosChange = strpos($reply_message, '<h6>Aangepast door: ');
-        if($message_newPosChange > 0){
-        $reply_message = substr_replace($reply_message, '', $message_newPosChange);
+        if ($message_newPosChange > 0) {
+            $reply_message = substr_replace($reply_message, '', $message_newPosChange);
         }
         //display form
         $bodyData['msg'] = $reply_message;
@@ -374,38 +409,37 @@ class Forum extends CI_Controller {
             }
         }
     }
+
     //Send confirmation to delete topic
-    public function deleteTopic($topic_id)
-    {
-         $headerData = ['title' => 'Delete topic'];
-         $bodyData['topic_title'] = $this->topic_model->getTitle($topic_id);
-         $this->session->set_flashdata('topic_id', $topic_id);
-            $this->load->view('tmpHeader_view', $headerData);
-            $this->load->view('forum/deleteTopic_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+    public function deleteTopic($topic_id) {
+        $headerData = ['title' => 'Delete topic'];
+        $bodyData['topic_title'] = $this->topic_model->getTitle($topic_id);
+        $this->session->set_flashdata('topic_id', $topic_id);
+        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('forum/deleteTopic_view', $bodyData);
+        $this->load->view('tmpFooter_view');
     }
+
     //Process deletion of topic
-    public function deleteTopicProcess(){
+    public function deleteTopicProcess() {
         $topic_id = $this->session->flashdata('topic_id');
         $result = $this->topic_model->delete($topic_id);
-        if(!$result){
+        if (!$result) {
             $this->session->set_flashdata('message', 'Deleten topic was momenteel niet mogelijk');
             redirect('welcome/message');
         } else {
             $this->index();
         }
     }
-    
-    public function closeTopic($topic_id)
-    {
+
+    public function closeTopic($topic_id) {
         $result = $this->topic_model->close($topic_id);
-        if(!$result){
+        if (!$result) {
             $this->session->set_flashdata('message', 'Topic sluiten mislukt');
             redirect('welcome/message');
         } else {
             $this->index();
         }
     }
-    
-}
 
+}
