@@ -26,7 +26,14 @@ echo form_label('Achternaam', 'lName');
 echo form_input($userdata['lName']);
 echo '<br/>';
 echo form_label('Geboortedatum', 'dateOfBirth');
+//if data is empty take first of list
+if($userdata['dateOfBirth'] == ''){
+    $dateOfBirth[0] = key($years);
+    $dateOfBirth[1] = key($months);
+    $dateOfBirth[2] = key($days);
+} else {
 $dateOfBirth = explode('-', $userdata['dateOfBirth']);
+}
 echo form_dropdown('day', $days, $dateOfBirth[2]);
 echo form_dropdown('month', $months, $dateOfBirth[1]);
 echo form_dropdown('year', $years, $dateOfBirth[0]);

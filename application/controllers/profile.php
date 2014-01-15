@@ -50,9 +50,12 @@ class Profile extends BaseController {
         if ($userdata->gender == 'm') {
             $sexM = true;
             $sexF = false;
-        } else {
+        } else if($userdata->gender == 'f') {
             $sexM = false;
             $sexF = true;
+        } else {
+            $sexM = false;
+            $sexF = false;
         }
         $genderM = array(
             'name' => 'gender',
