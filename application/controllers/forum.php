@@ -3,8 +3,9 @@
 /*
  * Author: Marijn Martens
  * Created on: 29/12/2013
- * Edit: 09/01/2013 : display timestamp, topicTitle, username/guestid, insert reply
- * Edit: 10/01/2013: update reply with check
+ * Edit: 09/01/2014 : display timestamp, topicTitle, username/guestid, insert reply
+ * Edit: 10/01/2014: update reply with check
+ * Edit: 14/01/2014: counters, cleaning code
  * References: All by my pure awesomeness
  */
 
@@ -19,12 +20,12 @@ class Forum extends CI_Controller {
         $this->load->model('forum_model');
         $this->load->model('topic_model');
         $this->load->model('reply_model');
+        $this->load->model('login_model');
+        $this->load->library('MyAccess');
     }
 
     //Main Forum - Lists different sections: Guests (i.e. FAQ, Guestbook) / Users / Hexioners / Admins
     public function index() {
-        //Prepare title for webpage
-        $headerData = ['title' => 'Forum'];
         //Get all sections from database where level is equal or higher
         //Only forums are shown when userlevel >= forumlevel
         $level = $this->session->userdata('level');
@@ -43,13 +44,14 @@ class Forum extends CI_Controller {
                 $topicTitle = $this->topic_model->getData($lastReply_result->topic_id)->title;
                 //a reply could be submitted by either a registered user or a guest, verify which of the 2
                 if ($lastReply_result->user_id != 0) {
-                    $replyUsername = $this->reply_model->getUsername($lastReply_result->user_id);
+;                    $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
                 } else {
                     $replyUsername = 'Gast' . $lastReply_result->guest_id;
                 }
+                //format timestamp date from database to PHP timestamp, then convert to desired format '00/00/0000 00:00'
                 $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result->date));
             }
-            //Rows to print to userscreen
+            //rows to userscreen
             $result = (
                     '<tr>' .
                     '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->title . '</a><br/>' .
@@ -61,153 +63,163 @@ class Forum extends CI_Controller {
                     $lastReplyDate . '</td>' .
                     '</tr>'
                     );
-            // }
             //Put each row in array
             $data[] = $result;
         }
+        //Prepare title for webpage
+        $headerData = ['title' => 'Forum'];
         //Send array to view
         $bodyData['forums'] = $data;
         $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/forum_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
-    
-    //display list of topics, more or less like function 'index'
-    public function topics($forum_id) {
-        //Set flashdata to remember forum_id when creating a new topic
-        $this->session->set_flashdata('forum_id', $forum_id);
-        $headerData = ['title' => 'Topics'];
-        //make list of topics
+
+    //Display list of topics
+    public function topics($forum_id = NULL) {
+        //security measure to find url tampering when no argument is entered
+         $libraryData = array('argument' => $forum_id);
+          $this->myaccess->missingArguments($libraryData); 
+        //security measure to disable modifying URL
+        $this->checkLevel($forum_id);
+        //Get list of topics in given forum
         $result = $this->topic_model->getTopics($forum_id);
-        $data[] = NULL;
-        $delete = false;
-        if ($this->session->userdata('level') >= 3 && $this->forum_model->getLevel($forum_id) < $this->session->userdata('level')) {
-            $delete = true;
-        }
-        //print each topic
+        //If there are topics in forum
         if ($result != NULL) {
+            //Display data for each topic
             foreach ($result as $row) {
                 $topic_id = $row->id;
-                $lastReply_result = $this->lastReplyTopic($topic_id);
-                //if no replies in topic
+                //Get data of lastreply in this topic
+                $lastReply_result = $this->reply_model->getLast($topic_id);
+                //if no replies in topic set text lastreply
                 if (!$lastReply_result) {
                     $replyUsername = $lastReplyDate = 'Onbekend';
                 } else {
-                    if ($lastReply_result['user_id'] != 0) {
-                        $replyUsername = $this->reply_model->getUsername($lastReply_result['user_id']);
+                    if ($lastReply_result->user_id != 0) {
+                        //get username
+                        $this->load->model('login_model');
+                        $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
                     } else {
-                        $replyUsername = 'Gast' . $lastReply_result['guest_id'];
+                        //get guest_id
+                        $replyUsername = 'Gast' . $lastReply_result->guest_id;
                     }
-                    $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result['date']));
-            }
-                if ($delete == TRUE) {
-                    $result[1] = '<td><a href="' . base_url() . 'forum/deleteTopic/' . $topic_id . '">Verwijder</a></td>';
-                } else {
-                    $result[1] = '';
+                    //format date
+                    $lastReplyDate = date('d/m/Y H:i', strtotime($lastReply_result->date));
                 }
-                $startTopicDate = strtotime($row->date);
+                $startTopicDate = date('d/m/Y H:i', strtotime($row->date));
                 $result[0] = (
                         '<tr>' .
                         '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->title . '</a><br/>' .
                         'Aangemaakt: <b>' . $row->username . '</b><br/>' .
-                        date('d/m/Y H:i', $startTopicDate) . '</td>' .
+                        $startTopicDate . '</td>' .
                         '<td><b>' . '#<b/> bezocht<br/>' .
                         '<b>' . $this->countReplies($topic_id) . '<b/> antwoorden</td>' .
                         '<td>Door: <b>' . $replyUsername . '</b><br/>' .
                         $lastReplyDate . '</td>'
                         );
+                //check if user is able to delete topic
+                $libraryData = array('forum_id' => $forum_id);
+                if ($this->myaccess->deleteTopic($libraryData)) {
+                    $result[1] = '<td><a href="' . base_url() . 'forum/deleteTopic/' . $topic_id . '">Verwijder</a></td>';
+                } else {
+                    $result[1] = '';
+                }
                 $result[2] = (
                         '</tr>'
                         );
+                //combine 3 results
                 $data[] = implode('', $result);
             }
+        } else { //there are no topics in the forum
+            $data[] = null;
         }
-
         //count # topics
         $count = $this->countTopics($forum_id);
-        //security measure to disable modifying URL
-        $this->checkLevel($forum_id);
         //display page
+        $headerData = ['title' => 'Topics'];
         $bodyData['topics'] = $data;
         $bodyData['count'] = $count;
+        //keep forum_id for insert new topic
         $this->session->set_flashdata('forum_id', $forum_id);
-        $this->load->view('tmpHeader_view', $headerData);
+        //$this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/topic_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
 
     //insert new topic
     public function insertTopic($error = NULL) {
+        //get forum_id from method topics
         $forum_id = $this->session->flashdata('forum_id');
+        echo $forum_id;
+        //check if user can create a topic
+        //$this->myaccess->insertTopic();
+        //security measure to find url tampering when no argument is entered
+        $libraryData = array('argument' => $forum_id, 'flash' => $forum_id);
+        $this->myaccess->missingArguments($libraryData); 
+        //get user_id
         $user_id = $this->session->userdata('user_id');
-
-        //guests are not allowed to insert a topic
-        if ($this->session->userdata('level') < 1) {
-            $this->session->set_flashdata('message', 'Je moet eerst inloggen vooraleer je een topic mag aanmaken');
-            redirect('welcome/message');
-        } else {
-
-            //Modifying URL should not let you reach insertTopic but just to be safe
-            $this->checkLevel($forum_id);
-
-            $this->load->library('form_validation');
-            $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-            //Valide field Title
-            $this->form_validation->set_rules(
-                    'title', 'Title', 'required|'
-                    . 'min_length[5]|'
-                    . 'max_length[100]|'
+        //set form validation
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+        //Valide fields
+        $this->form_validation->set_rules(
+                'title', 'Title', 'required|'
+                . 'min_length[5]|'
+                . 'max_length[100]|'
+        );
+        $this->form_validation->set_rules(
+                'reply', 'OP', 'required|'
+                . 'min_length[2]|'
+                . 'max_length[2000]|'
+        );
+        //Validation form, empty or not correct
+        if ($this->form_validation->run() == FALSE) {
+            $headerData = ['title' => 'Nieuw Topic'];
+            $bodyData['error'] = $error;
+            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('forum/insertTopic_view', $bodyData);
+            $this->load->view('tmpFooter_view');
+            //keep flashdata for another run
+            $this->session->keep_flashdata('forum_id');
+        } else { //Validation is OK, open model to insert new topic
+            $result_topic = $this->topic_model->insert(
+                    $forum_id, $user_id, ucfirst($this->input->post('title'))
             );
-            $this->form_validation->set_rules(
-                    'reply', 'OP', 'required|'
-                    . 'min_length[2]|'
-                    . 'max_length[2000]|'
-            );
-
-            //Validation form
-            if ($this->form_validation->run() == FALSE) {
-                $headerData = ['title' => 'Nieuw Topic'];
-                $bodyData['error'] = $error;
-                $this->load->view('tmpHeader_view', $headerData);
-                $this->load->view('forum/insertTopic_view', $bodyData);
-                $this->load->view('tmpFooter_view');
-                $forum_id = $this->session->keep_flashdata('forum_id');
-            } else { //Validation is OK, open model to insert new topic
-                $result_topic = $this->topic_model->insert(
-                        $forum_id, $user_id, ucfirst($this->input->post('title'))
+            if (!$result_topic) { //Model did not insert data in database
+                $bodyData = ['error' => 'Topic aanmaken is mislukt, probeer nogmaals'];
+                $this->insertTopic($error);
+            } else {
+                //insert first post in newly created topic
+                $result_reply = $this->reply_model->insert(
+                        $result_topic, $this->input->post('reply'), $user_id
                 );
-                if (!$result_topic) { //Model did not insert data in database
-                    $bodyData = ['error' => 'Insert in topic-table failed,'
-                        . ' sure database is up and running?'];
-                    $this->insertTopic($error);
+                if (!$result_reply) { //Model did not insert data in database
+                    $bodyData = ['error' => 'Openingspost aanmaken is mislukt, probeer topic te openen en een nieuwe reply aan te maken'];
+                    $this->insertReply($error);
                 } else {
-                    $this->load->model('reply_model');
-                    $result_reply = $this->reply_model->insert(
-                            $result_topic, $this->input->post('reply'), $user_id
-                    );
-                    if (!$result_reply) { //Model did not insert data in database
-                        $bodyData = ['error' => 'Insert in database failed,'
-                            . ' sure database is up and running?'];
-                        $this->insertReply($error);
-                    } else {
-                        $this->replies($result_topic);
-                    }
+                    $this->replies($result_topic);
                 }
             }
         }
     }
 
     //display list of replies in one topic
-    public function replies($topic_id) {
-        $this->session->set_flashdata('topic_id', $topic_id);
-        $headerData = ['title' => 'Replies'];
+    public function replies($topic_id = NULL) {
+        //security measure to find url tampering when no argument is entered
+         $libraryData = array('argument' => $topic_id);
+          $this->myaccess->missingArguments($libraryData);
+        //set title
+        //get counters
         $result = $this->reply_model->getReplies($topic_id);
         $count = $this->reply_model->getCount($topic_id) - 1;
-
+        //set bodyData
         $bodyData['replies'] = $result;
         $bodyData['count'] = $count;
-
-        $this->load->view('tmpHeader_view', $headerData);
+        //display page
+        //set topic_id so we can throw it to insertReply
+        $this->session->set_flashdata('topic_id', $topic_id);
+        $headerData = ['title' => 'Replies'];
+        //$this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/reply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
@@ -215,32 +227,38 @@ class Forum extends CI_Controller {
     //insert new reply
     public function insertReply($error = NULL) {
         $topic_id = $this->session->flashdata('topic_id');
+        echo $topic_id;
+        //security measure to find url tampering when no argument is entered
+         $libraryData = array('argument' => $topic_id);
+          $this->myaccess->missingArguments($libraryData); 
+        //get user_id if available, else get or create guest_id
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
         if ($user_id == NULL) {
-            if (!($this->input->cookie('guest_id'))) {
-                $guest_id = $this->reply_model->anonymous();
-            } else
+            if ($this->input->cookie('guest_id')) {
                 $guest_id = $this->input->cookie('guest_id');
+            } else {
+                $guest_id = $this->reply_model->anonymous();
+            }
         }
-
+        //Validate form
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-
-        //Fields die gecontroleerd gaan worden
+        //Validate fields
         $this->form_validation->set_rules(
                 'reply', 'Post', 'required|'
                 . 'min_length[2]|'
                 . 'max_length[2000]|'
         );
-
         //Validation form
         if ($this->form_validation->run() == FALSE) {
+            //First load or form is bad
             $headerData = ['title' => 'Nieuw Reply'];
             $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
+           // $this->load->view('tmpHeader_view', $headerData);
             $this->load->view('forum/insertReply_view', $bodyData);
             $this->load->view('tmpFooter_view');
+            //Keep topic_id for another run
             $topic_id = $this->session->keep_flashdata('topic_id');
         } else { //Validation is OK, open model to insert new topic
             $this->load->model('reply_model');
@@ -248,8 +266,7 @@ class Forum extends CI_Controller {
                     $topic_id, ucfirst($this->input->post('reply')), $user_id, $guest_id
             );
             if (!$result) { //Model did not insert data in database
-                $bodyData = ['error' => 'Insert in database failed,'
-                    . ' sure database is up and running?'];
+                $bodyData = ['error' => 'Antwoord aanmaken is mislukt, probeer nogmaals'];
                 $this->insertReply($error);
             } else {
                 $this->replies($topic_id);
@@ -258,35 +275,44 @@ class Forum extends CI_Controller {
     }
 
     //edit existing reply
-    public function editReply($reply_id, $error = NULL) {
-        $headerData = ['title' => 'Edit Reply'];
-        $bodyData['error'] = $error;
+    public function editReply($reply_id = NULL, $error = NULL) {
+        //security measure to find url tampering when no argument is entered
+        $libraryData = array('argument' => $reply_id);
+         $this->myaccess->missingArguments($libraryData);
+        //get original data
         $result = $this->reply_model->get($reply_id);
-        //closed by admin, stop further processing
+        //if reply closed by admin, stop further processing
         if ($result->mod_break == TRUE) {
             $this->session->set_flashdata('message', 'Geen toegang tot aanpassen reply');
             redirect('welcome/message');
         } else { //check for URL modification
+            //to edit a reply the user_id has to match the original if present
             if ($result->user_id != $this->session->userdata('user_id')) {
+                //If not, to edit a reply the user_level has to be at least 3
                 if ($this->session->userdata('level') < 3) {
+                    //If not, to edit a reply the guest_id has to match the original
                     if ($result->guest_id != $this->input->cookie('guest_id')) {
+                        //If not one condition is true, get out of here
                         $this->session->set_flashdata('message', 'Geen toegang tot aanpassen reply');
                         redirect('welcome/message');
                     }
                 }
             }
         }
-        //subtract te modified message from text before showing
+        //subtract the modified message ('edited on + data + username') from text before showing
         $reply_message = $result->message;
+        //remove string at pos to end if found
         $message_newPosChange = strpos($reply_message, '<h6>Aangepast door: ');
         if ($message_newPosChange > 0) {
             $reply_message = substr_replace($reply_message, '', $message_newPosChange);
         }
         //display form
+        $headerData = ['title' => 'Edit Reply'];
+        $bodyData['error'] = $error;
         $bodyData['msg'] = $reply_message;
         $this->session->set_flashdata('reply_id', $reply_id);
         $this->session->set_flashdata('message_old', $reply_message);
-        $this->load->view('tmpHeader_view', $headerData);
+       // $this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/editReply_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
@@ -324,8 +350,7 @@ class Forum extends CI_Controller {
                     $reply_id, ucfirst($message), $mod_break, $this->session->flashdata('message_old')
             );
             if (!$result) { //Model did not insert data in database
-                $error = 'Insert in database failed,'
-                        . ' sure database is up and running?';
+                $error = 'Antwoord wijzigen is mislukt, probeer nogmaals';
                 $this->editReply($reply_id, $error);
             } else {
                 $topic_id = $this->reply_model->get($reply_id)->topic_id;
@@ -339,7 +364,7 @@ class Forum extends CI_Controller {
         $headerData = ['title' => 'Delete topic'];
         $bodyData['topic_title'] = $this->topic_model->getData($topic_id)->title;
         $this->session->set_flashdata('topic_id', $topic_id);
-        $this->load->view('tmpHeader_view', $headerData);
+        //$this->load->view('tmpHeader_view', $headerData);
         $this->load->view('forum/deleteTopic_view', $bodyData);
         $this->load->view('tmpFooter_view');
     }
@@ -365,26 +390,6 @@ class Forum extends CI_Controller {
             $this->index();
         }
     }
-    
-    //get last reply in topic
-    private function lastReplyTopic($topic_id) {
-        $result = $this->reply_model->getLast($topic_id);
-        if ($result) {
-            $dateMax = '';
-            foreach ($result as $reply) {
-                if ($reply->date > $dateMax) {
-                    $dateMax = $reply->date;
-                    $data = array('user_id' => $reply->user_id,
-                        'guest_id' => $reply->guest_id,
-                        'date' => $reply->date
-                    );
-                }
-            }
-            return $data;
-        } else {
-            return false;
-        }
-    }
 
     //get last reply in forum
     private function lastReplyForum($forum_id) {
@@ -398,16 +403,16 @@ class Forum extends CI_Controller {
                 //get latest reply data for each topic
                 $reply = $this->reply_model->getLast($row->id);
                 //Check if last-reply in last-topic is newer than earlier topics
-                    if ($reply->date > $dateMax) {
-                        //reset dateMax to current date
-                        $dateMax = $reply->date;
-                        //fill return array with data current reply
-                        $data = $reply;
-                    }
+                if ($reply->date > $dateMax) {
+                    //reset dateMax to current date
+                    $dateMax = $reply->date;
+                    //fill return array with data current reply
+                    $data = $reply;
+                }
             }
             return $data;
         } else {
-            return false;
+            return FALSE;
         }
     }
 
@@ -441,10 +446,9 @@ class Forum extends CI_Controller {
         $user_level = $this->session->userdata('level');
         $forum_level = $this->forum_model->getLevel($forum_id);
         if ($user_level < $forum_level) {
-            $this->session->set_flashdata('message', 'Gasten mogen niet in dit forum!');
+            $this->session->set_flashdata('message', 'Je moet een hoger toegangsrecht hebben om in dit forum te mogen.');
             redirect('welcome/message');
         }
     }
-
 
 }
