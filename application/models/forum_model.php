@@ -12,13 +12,11 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Forum_model extends CI_Model {
-
+    //get all forums user has access to
     public function getForums($level = 0) {
-        $this->db->select('*');
-        $this->db->from('forum');
         $this->db->where('level <=', $level);
         $this->db->order_by('id');
-        $query = $this->db->get();
+        $query = $this->db->get('forum');
         return $query->result();
     }
     //Restrict access

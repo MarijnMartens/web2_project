@@ -36,27 +36,18 @@ class Login_model extends CI_Model {
         return false;
     }
     
-    public function getUserdata($user_id){
+    public function getUserdata($user_id) {
         $this->db->where('id', $user_id);
         $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() == 1) {
             $row = $query->row();
-            $data = array(
-            'fName' => $row->fName,
-            'lName' => $row->lName,
-            'dateOfBirth' => $row->dateOfBirth,
-            'gender' => $row->gender,
-            'city' => $row->city
-            );
-            return $data;
+            return $row;
         } else {
             return false;
         }
-        
     }
-    
-    
+
 }
 
 ?>

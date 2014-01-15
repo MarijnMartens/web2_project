@@ -30,8 +30,9 @@ if (!defined('BASEPATH'))
     </tr>
     <tr>
         <td><label for="message">Bericht Inhoud</label></td>
-        <td><textarea name="message" rows="10" cols="80" wrap="soft"><?php echo set_value('message'); ?></textarea></td>
+        <td><textarea name="message" rows="10" cols="80" wrap="soft" placeholder="Bericht"><?php echo set_value('message'); ?></textarea></td>
     </tr>
+   
     <tr>
         <td colspan="3"><input type="submit" value="Stuur bericht naar Admin" /></td>
     </tr>

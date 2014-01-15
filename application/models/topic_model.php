@@ -13,46 +13,26 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Topic_model extends CI_Model {
-
-    function __construct() {
-        parent::__construct();
-    }
-    //get title of given topic
-    public function getTitle($topic_id) {
-        $this->db->select('title');
-        $this->db->from('topic');
-        $this->db->where('id', $topic_id);
-        $query = $this->db->get();
-
-        if ($query->num_rows() == 1) {
-            return $query->row()->title;
-        } else {
-            return false;
-        }
-    }
     //get all data from one topic
     public function getData($topic_id){
         $this->db->where('id', $topic_id);
-        $query = $this->db->get();
+        $query = $this->db->get('topic');
         if ($query->num_rows() == 1) {
             return $query->row();
         } else {
             return false;
         }
     }
-
     //return list of topics
     public function getTopics($forum_id) {
         $this->db->select('topic.*, user.username');
         $this->db->from('topic');
         $this->db->join('user', 'topic.user_id = user.id');
         $this->db->where('topic.forum_id', $forum_id);
-        //$this->db->where('topic.status', 1);
         $this->db->order_by('topic.date', 'desc');
         $query = $this->db->get();
         return $query->result();
     }
-
     //return count of topics
     public function getCount($forum_id) {
         $this->db->select('count(*) as count');
@@ -61,7 +41,6 @@ class Topic_model extends CI_Model {
         $query = $this->db->get();
         return $query->row()->count;
     }
-
     //return list of topic id's from one forum, 
     //used for reply counter in forum
     public function getAll($forum_id) {
@@ -76,17 +55,20 @@ class Topic_model extends CI_Model {
             return false;
         }
     }
-
     //insert new topic
     public function insert($forum_id, $user_id, $title) {
+        //prepare data
         $data = array(
             'forum_id' => $forum_id,
             'user_id' => $user_id,
             'title' => $title
         );
+        //insert data
         $this->db->insert('topic', $data);
         $query = $this->db->affected_rows();
+        //check if insert was successfull
         if ($query == 1) {
+            //return topic_id we just created
             $this->db->select('MAX(id) as max_id');
             $this->db->from('topic');
             $query = $this->db->get();

@@ -13,7 +13,7 @@ include_once 'basecontroller.php';
 class Profile extends BaseController {
 
     //view displays all information in a view-only format
-    public function view() {
+    public function index() {
         $this->load->model('login_model');
         $bodyData['userdata'] = $this->login_model->getUserdata($this->session->userdata('user_id'));
         //getUserData failed
@@ -32,22 +32,22 @@ class Profile extends BaseController {
 
     //edit non-critical user information
     public function edit($error = NULL) {
-        //get all data from view 
+        //get all data from index 
         $userdata = $this->session->flashdata('userdata');
         //prepare form fields, fill value where provided
         $fName = array(
             'name' => 'fName',
             'id' => 'fName',
-            'value' => $userdata['fName']
+            'value' => $userdata->fName
         );
         $lName = array(
             'name' => 'lName',
             'id' => 'lName',
-            'value' => $userdata['lName']
+            'value' => $userdata->lName
         );
-        $dateOfBirth = $userdata['dateOfBirth'];
+        $dateOfBirth = $userdata->dateOfBirth;
         //Fill radiogroup gender
-        if ($userdata['gender'] == 'm') {
+        if ($userdata->gender == 'm') {
             $sexM = true;
             $sexF = false;
         } else {
@@ -69,7 +69,7 @@ class Profile extends BaseController {
         $city = array(
             'name' => 'city',
             'id' => 'city',
-            'value' => $userdata['city']
+            'value' => $userdata->city
         );
 
         $headerData = ['title' => 'Edit profile'];
@@ -138,7 +138,7 @@ class Profile extends BaseController {
                 $error = 'Invoer in database is mislukt';
                 $this->edit($error);
             } else {
-                $this->view();
+                $this->index();
             }
             
         }

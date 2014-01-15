@@ -55,9 +55,9 @@ References: none
                     <li><a href="<?php echo base_url('login/index'); ?>">Login</a></li>
                     <li><a href="<?php echo base_url('login/register'); ?>">Registreer</a></li>
                 </ul>
-
+                
                 <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
-                    <li><a href="<?php echo base_url('profile/view'); ?>">Settings</a></li>
+                    <li><a href="<?php echo base_url('profile/index'); ?>">Profiel</a></li>
                     <li>messenger</li>
                     <li><a href="<?php echo base_url('profile/all'); ?>">Ledenlijst</a></li>
                     <li>notifications</li>
@@ -67,7 +67,7 @@ References: none
                 <ul id="menu">
                     <li><a href="<?php echo base_url('welcome/index'); ?>">Startpagina</a></li>
                     <li><a href="<?php echo base_url('forum/index'); ?>">Forum</a></li>
-                    <li><a href="<?php echo base_url('event/view'); ?>">Evenementen</a></li>
+                    <li><a href="<?php echo base_url('event/index'); ?>">Evenementen</a></li>
                     <li><a href="<?php echo base_url('welcome/info'); ?>">Info</a></li>
                     <li><a href="<?php echo base_url('welcome/contact'); ?>">Contact</a></li>
                 </ul>

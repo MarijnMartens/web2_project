@@ -12,7 +12,7 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Reply_model extends CI_Model {
-
+    //get all replies from one topic
     public function getReplies($topic_id) {
         $this->db->select('reply.*, user.username');
         $this->db->from('reply');
@@ -22,28 +22,17 @@ class Reply_model extends CI_Model {
         $query = $this->db->get();
         return $query->result();
     }
-
-    //get username corresponing to user_id from replies
-    public function getUsername($user_id) {
-        $this->db->select('username');
-        $this->db->from('user');
-        $this->db->where('id', $user_id);
-        $query = $this->db->get();
-        return $query->row()->username;
-    }
-
     //get last reply per topic
     public function getLast($topic_id) {
         $this->db->where('topic_id', $topic_id);
         $this->db->where("date = (select max(date) FROM reply WHERE topic_id = $topic_id)");
         $query = $this->db->get('reply');
         if ($query->num_rows() == 1) {
-            return $query->result();
+            return $query->row();
         } else {
             return false;
         }
     }
-
     //count replies per topic
     public function getCount($topic_id) {
         $this->db->select('count(*) as count');
@@ -52,14 +41,20 @@ class Reply_model extends CI_Model {
         $query = $this->db->get();
         return $query->row()->count;
     }
-
+    //reply anonymously, create ID
     public function anonymous() {
         $guest_id = time() - strtotime('5 January 2014') . microtime() * 1000000;
         $this->input->set_cookie('guest_id', $guest_id, 60*60*24*365);
         return $guest_id;
     }
-
+    //insert reply
     public function insert($topic_id, $msg, $user_id = 0, $guest_id = 0) {
+        //check not both user_id and guest_id are empty
+        if($user_id == 0 && $guest_id == 0){
+            //make a guest_id
+            $this->anonymous();
+        }
+        //prepare data
         $data = array(
             'topic_id' => $topic_id,
             'user_id' => $user_id,
