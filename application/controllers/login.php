@@ -94,7 +94,7 @@ class Login extends CI_Controller {
         } else { //Validation is OK, open model to insert new user
             $this->load->model('register_model');
             $result = $this->register_model->setUsers(
-            ucfirst($this->input->post('username')), $this->input->post('password'), $this->input->post('email')
+                    ucfirst($this->input->post('username')), $this->input->post('password'), $this->input->post('email')
             );
             if (!$result) { //Model did not insert data in database
                 $bodyData = ['error' => 'Invoer in database is mislukt'];
@@ -116,10 +116,15 @@ class Login extends CI_Controller {
             return TRUE;
         }
     }
-    
-    public function password_forget($error = NULL){
+
+    public function password_forget($error = NULL) {
+        //call captcha-library
+        $this->load->library('MyCaptcha');
+        //Display page
         $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+        $captcha = $this->mycaptcha->showCaptcha();
         $bodyData['error'] = $error;
+        $bodyData['captcha'] = $captcha;
         $this->load->view('template/tmpHeader_view', $headerData);
         $pageData = ['aside_visible' => 'false'];
         $this->load->view('template/tmpPage_view', $pageData);
@@ -129,6 +134,8 @@ class Login extends CI_Controller {
 
     //Forgot password
     public function password_reset($error = NULL) {
+        //call captcha-library
+        $this->load->library('MyCaptcha');
         //Call for methods
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
@@ -154,32 +161,36 @@ class Login extends CI_Controller {
                 $this->password_forget($error);
             } else {
                 //Validations both OK, go on with transaction
-                $this->load->model('password_model');
-                $result = $this->password_model->reset($username, $email);
-                if (!$result) { //Model did not insert data in database
-                    $error = 'Gebruikersnaam of email adres is fout';
+                //Check captcha
+                $captcha = $this->mycaptcha->validateCaptcha();
+                if (!$captcha) {
+                    $error = 'We konden niet vaststellen dat je een mens bent, probeer nogmaals';
                     $this->password_forget($error);
                 } else {
-                    if ($username == '') {
-                        //$username = $this->session->flashdata('username');
-                        $username = $result['username'];
-                    }
-                    if ($email == '') {
-                        //$email = $this->session->flashdata('email');
-                        $email = $result['email'];
-                    }
-                    // Send them email
-                    $this->load->model('email_model');
-                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 
-                            'VOS@50eten', 'Reset paswoord Hexioners.be', 
-                            'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.', 
-                            $email
-                    );
-                    if (!$result) {
-                        $error = 'De mailserver is even ziek, probeer later opnieuw';
+                    $this->load->model('password_model');
+                    $result = $this->password_model->reset($username, $email);
+                    if (!$result) { //Model did not insert data in database
+                        $error = 'Gebruikersnaam of email adres is fout';
                         $this->password_forget($error);
                     } else {
-                        $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
+                        if ($username == '') {
+                            //$username = $this->session->flashdata('username');
+                            $username = $result['username'];
+                        }
+                        if ($email == '') {
+                            //$email = $this->session->flashdata('email');
+                            $email = $result['email'];
+                        }
+                        // Send them email
+                        $this->load->model('email_model');
+                        $result = $this->email_model->mail('do-not-reply@hexioners.be', 'VOS@50eten', 'Reset paswoord Hexioners.be', 'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.', $email
+                        );
+                        if (!$result) {
+                            $error = 'De mailserver is even ziek, probeer later opnieuw';
+                            $this->password_forget($error);
+                        } else {
+                            $this->index($error = '<span style="color:blue;">Een email werd naar ' . $email . ' verzonden.</span>');
+                        }
                     }
                 }
             }

@@ -71,7 +71,7 @@ class Welcome extends CI_Controller {
         $this->load->library('MyCaptcha');
         //Call form validation-library
         $this->load->library('form_validation');
-        //display page
+        //Display page
         $headerData = ['title' => 'Contact'];
         $captcha = $this->mycaptcha->showCaptcha();
         $bodyData['error'] = $error;

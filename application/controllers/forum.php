@@ -44,7 +44,8 @@ class Forum extends CI_Controller {
                 $topicTitle = $this->topic_model->getData($lastReply_result->topic_id)->title;
                 //a reply could be submitted by either a registered user or a guest, verify which of the 2
                 if ($lastReply_result->user_id != 0) {
-;                    $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
+                    ;
+                    $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
                 } else {
                     $replyUsername = 'Gast' . $lastReply_result->guest_id;
                 }
@@ -79,8 +80,8 @@ class Forum extends CI_Controller {
     //Display list of topics
     public function topics($forum_id = NULL) {
         //security measure to find url tampering when no argument is entered
-         $libraryData = array('argument' => $forum_id);
-          $this->myaccess->missingArguments($libraryData); 
+        $libraryData = array('argument' => $forum_id);
+        $this->myaccess->missingArguments($libraryData);
         //security measure to disable modifying URL
         $this->checkLevel($forum_id);
         //Get list of topics in given forum
@@ -158,7 +159,7 @@ class Forum extends CI_Controller {
         $this->myaccess->insertTopic();
         //security measure to find url tampering when no argument is entered
         $libraryData = array('argument' => $forum_id, 'flash' => $forum_id);
-        $this->myaccess->missingArguments($libraryData); 
+        $this->myaccess->missingArguments($libraryData);
         //get user_id
         $user_id = $this->session->userdata('user_id');
         //set form validation
@@ -211,8 +212,8 @@ class Forum extends CI_Controller {
     //display list of replies in one topic
     public function replies($topic_id = NULL) {
         //security measure to find url tampering when no argument is entered
-         $libraryData = array('argument' => $topic_id);
-          $this->myaccess->missingArguments($libraryData);
+        $libraryData = array('argument' => $topic_id);
+        $this->myaccess->missingArguments($libraryData);
         //set title
         //get counters
         $result = $this->reply_model->getReplies($topic_id);
@@ -233,11 +234,14 @@ class Forum extends CI_Controller {
 
     //insert new reply
     public function insertReply($error = NULL) {
+        //call captcha-library
+        $this->load->library('MyCaptcha');
+        //Call form validation-library
         $topic_id = $this->session->flashdata('topic_id');
         echo $topic_id;
         //security measure to find url tampering when no argument is entered
-         $libraryData = array('argument' => $topic_id);
-          $this->myaccess->missingArguments($libraryData); 
+        $libraryData = array('argument' => $topic_id);
+        $this->myaccess->missingArguments($libraryData);
         //get user_id if available, else get or create guest_id
         $user_id = $this->session->userdata('user_id');
         $guest_id = NULL;
@@ -260,25 +264,35 @@ class Forum extends CI_Controller {
         //Validation form
         if ($this->form_validation->run() == FALSE) {
             //First load or form is bad
+            $captcha = $this->mycaptcha->showCaptcha();
             $headerData = ['title' => 'Nieuw Reply'];
             $bodyData['error'] = $error;
-           // $this->load->view('template/tmpHeader_view', $headerData);
+            $bodyData['captcha'] = $captcha;
+            // $this->load->view('template/tmpHeader_view', $headerData);
             $pageData = ['aside_visible' => 'false'];
             $this->load->view('template/tmpPage_view', $pageData);
             $this->load->view('forum/insertReply_view', $bodyData);
             $this->load->view('template/tmpFooter_view');
             //Keep topic_id for another run
             $topic_id = $this->session->keep_flashdata('topic_id');
-        } else { //Validation is OK, open model to insert new topic
-            $this->load->model('reply_model');
-            $result = $this->reply_model->insert(
-                    $topic_id, ucfirst($this->input->post('reply')), $user_id, $guest_id
-            );
-            if (!$result) { //Model did not insert data in database
-                $bodyData = ['error' => 'Antwoord aanmaken is mislukt, probeer nogmaals'];
-                $this->insertReply($error);
+        } else { //Validation is OK, check if captcha is needed
+            $captcha = $this->mycaptcha->validateCaptcha();
+            if (!$captcha) {
+                /*$error = 'We konden niet vaststellen dat je een mens bent, probeer nogmaals';
+                $this->insertReply($error);*/
+                echo 'DIT WERKT NOG NIET, splits methode op in insertReplyProcess';
             } else {
-                $this->replies($topic_id);
+                //open model to insert new topi
+                $this->load->model('reply_model');
+                $result = $this->reply_model->insert(
+                        $topic_id, ucfirst($this->input->post('reply')), $user_id, $guest_id
+                );
+                if (!$result) { //Model did not insert data in database
+                    $bodyData = ['error' => 'Antwoord aanmaken is mislukt, probeer nogmaals'];
+                    $this->insertReply($error);
+                } else {
+                    $this->replies($topic_id);
+                }
             }
         }
     }
@@ -287,7 +301,7 @@ class Forum extends CI_Controller {
     public function editReply($reply_id = NULL, $error = NULL) {
         //security measure to find url tampering when no argument is entered
         $libraryData = array('argument' => $reply_id);
-         $this->myaccess->missingArguments($libraryData);
+        $this->myaccess->missingArguments($libraryData);
         //get original data
         $result = $this->reply_model->get($reply_id);
         //if reply closed by admin, stop further processing
@@ -321,7 +335,7 @@ class Forum extends CI_Controller {
         $bodyData['msg'] = $reply_message;
         $this->session->set_flashdata('reply_id', $reply_id);
         $this->session->set_flashdata('message_old', $reply_message);
-       // $this->load->view('template/tmpHeader_view', $headerData);
+        // $this->load->view('template/tmpHeader_view', $headerData);
         $pageData = ['aside_visible' => 'false'];
         $this->load->view('template/tmpPage_view', $pageData);
         $this->load->view('forum/editReply_view', $bodyData);
