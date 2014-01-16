@@ -29,11 +29,12 @@ $ayah = new AYAH();
     <tr>
         <td><label for="subject">Onderwerp</label></td>
         <td><input type="text" name="subject" placeholder="Onderwerp" value="<?php echo set_value('subject'); ?>" size="70" /></td>
-        <td><?php echo form_error('title'); ?></td>
+        <td><?php echo form_error('subject'); ?></td>
     </tr>
     <tr>
         <td><label for="message">Bericht Inhoud</label></td>
         <td><textarea name="message" rows="10" cols="80" wrap="soft" placeholder="Bericht"><?php echo set_value('message'); ?></textarea></td>
+        <td><?php echo form_error('message'); ?></td>
     </tr>
     <tr>
         <td>Voer de captcha uit</td>
