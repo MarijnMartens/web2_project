@@ -47,7 +47,7 @@ if (array_key_exists('my_submit_button_name', $_POST))
 ?>
 
 <!-- Now we're going to build the form that PlayThru is attached to.
-In this example, the form submits to itself. -->
+In this example, the form submits to itselfd. -->
 <form method="post" action="">
 
         <p>Please enter your name: <input type="text" name="name" /></p>
