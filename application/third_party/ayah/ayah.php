@@ -156,9 +156,11 @@ class AYAH {
 			$this->__log("ERROR", __FUNCTION__, $message);
 
 			// Build and display a helpful message to the site user.
-			$style = "padding: 10px; border: 1px solid #EED3D7; background: #F2DEDE; color: #B94A48;";
+			/*$style = "padding: 10px; border: 1px solid #EED3D7; background: #F2DEDE; color: #B94A48;";
 			$message = "Unable to load the <i>Are You a Human</i> PlayThru&trade;.  Please contact the site owner to report the problem.";
-			echo "<p style=\"$style\">$message</p>\n";
+			echo "<p style=\"$style\">$message</p>\n";*/
+                        $error = 'Captcha kon niet geladen worden, herlaad de pagina of contacteer de admin';
+                        return "<span class='error'>$error</span>"; 
 		}
 	}
 
