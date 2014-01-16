@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Author: Marijn Martens
  * Created on: 29/12/2013
@@ -12,32 +13,37 @@ if (!defined('BASEPATH'))
 
 class Email_model extends CI_Model {
 
-    public function mail($username, $password, $from, $to, $subject, $message) {
+    public function mail($username, $password, $to = null, $subject, $message) {
         require 'application/third_party/PHPMailer-master/class.phpmailer.php';
 
-                try {
-                    $mail = new PHPMailer;
-
-                    $mail->isSMTP();                                      // Set mailer to use SMTP
-                    $mail->Host = 'smtp.live.com';  // Specify main and backup server
-                    $mail->SMTPAuth = true;                               // Enable SMTP authentication
-                    $mail->Username = $username;                            // SMTP username
-                    $mail->Password = $password;                           // SMTP password
-                    $mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
-
-                    $mail->From = $from;
-                    $mail->addAddress($to);  // Add a recipient
-                    $mail->isHTML(true);
-                    $mail->Subject = $subject;
-                    $mail->Body = $message;
-                    if (!$mail->send()) {
-                        return FALSE;
-                    }
-                    return TRUE;
-                } catch (Exception $e) {
-                    return FALSE;
-                    
-                }
-            }
+        if ($to == null) {
+            $to = $username;
         }
-        ?>
+
+        try {
+            $mail = new PHPMailer;
+
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = 'smtp.live.com';  // Specify main and backup server
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = $username;                            // SMTP username
+            $mail->Password = $password;                           // SMTP password
+            $mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+            $mail->From = $username;
+            $mail->addAddress($to);  // Add a recipient
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $message;
+            if (!$mail->send()) {
+                return FALSE;
+            }
+            return TRUE;
+        } catch (Exception $e) {
+            return FALSE;
+        }
+    }
+
+}
+
+?>

@@ -45,7 +45,7 @@ class Login extends CI_Controller {
         } else {
             // If user did validate, 
             // Send them to members area
-            redirect('user');
+            redirect('welcome');
         }
     }
 
@@ -170,7 +170,7 @@ class Login extends CI_Controller {
                     }
                     // Send them email
                     $this->load->model('email_model');
-                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 'VOS@50eten', 'do-not-reply@hexioners.be', $email, 'Reset paswoord Hexioners.be', 'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.'
+                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 'VOS@50eten', $email, 'Reset paswoord Hexioners.be', 'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.'
                     );
                     if (!$result) {
                         $error = 'De mailserver is even ziek, probeer later opnieuw';

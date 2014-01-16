@@ -100,8 +100,7 @@ class Welcome extends CI_Controller {
         } else { //Validation is OK, open model to insert new user
             $this->load->model('email_model');
             $result = $this->email_model->mail(
-                    'contact@hexioners.be', 'VOS@50eten', 'contact@hexioners.be', 
-                    'contact@hexioners.be', 'Contact Hexioners.be ' . $this->input->post('subject'),
+                    'contact@hexioners.be', 'VOS@50eten', 'Contact Hexioners.be ' . $this->input->post('subject'),
                     'Geschreven door: ' . ucfirst($this->input->post('name')) . '</br>'
                     . 'Email: <a href="mailto:' . $this->input->post('email') . '">Send back</a><br/>'
                     . $this->input->post('message')
