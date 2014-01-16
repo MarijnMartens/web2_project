@@ -21,37 +21,42 @@ class Welcome extends CI_Controller {
             $msg = 'Intern iets misgelopen';
         }
         $bodyData = ['message' => $msg];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('message_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     public function index() {
         $headerData = ['title' => 'Index'];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('index_view');
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     public function info() {
         $headerData = ['title' => 'Info'];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('info_view');
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     public function forum() {
         $headerData = ['title' => 'Forum'];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('forum_view');
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     public function event() {
         $headerData = ['title' => 'Events'];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('event_view');
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
     //decrapicated i believe
     public function login() {
@@ -88,9 +93,10 @@ class Welcome extends CI_Controller {
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Contact'];
             $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('template/tmpHeader_view', $headerData);
+            $this->load->view('template/tmpPage_view');
             $this->load->view('contact_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+            $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
             $this->load->model('email_model');
             $result = $this->email_model->mail(
