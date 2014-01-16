@@ -1,4 +1,5 @@
 <?php
+
 //edit23
 /*
  * Author: Marijn
@@ -11,8 +12,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class Welcome extends CI_Controller {
-    
-    public function message(){
+
+    public function message() {
         $headerData = ['title' => 'Boodschap van algemeen nut'];
         //If we forget to set up a flash_session
         try {
@@ -58,12 +59,13 @@ class Welcome extends CI_Controller {
         $this->load->view('event_view');
         $this->load->view('template/tmpFooter_view');
     }
+
     //decrapicated i believe
     public function login() {
         redirect(login);
     }
-    
-    public function contact($error = NULL){
+
+    public function contact($error = NULL) {
         //Call for methods
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
@@ -99,27 +101,27 @@ class Welcome extends CI_Controller {
             $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
             require_once("application/third_party/ayah/ayah.php");
-$ayah = new AYAH();
-$score = $ayah->scoreResult();
-            if(!$score){
+            $ayah = new AYAH();
+            $score = $ayah->scoreResult();
+            if (!$score) {
                 $error = 'We konden niet vaststelen dat je een mens bent, probeer nogmaals';
                 $this->contact($error);
-            }
-            $this->load->model('email_model');
-            $result = $this->email_model->mail(
-                    'contact@hexioners.be', 'VOS@50eten', 'Contact Hexioners.be ' . $this->input->post('subject'),
-                    'Geschreven door: ' . ucfirst($this->input->post('name')) . '</br>'
-                    . 'Email: <a href="mailto:' . $this->input->post('email') . '">Send back</a><br/>'
-                    . $this->input->post('message')
-                            );
-            if (!$result) { //Model did not insert data in database
-                $error = 'Bericht kon niet verzonden worden, probeer het zodadelijk nogmaals';
-                $this->contact($error);
             } else {
-                $this->session->set_flashdata('message', 'Bericht verzonden, je krijgt ASAP een antwoord');
-                redirect('welcome/message');
+                $this->load->model('email_model');
+                $result = $this->email_model->mail(
+                        'contact@hexioners.be', 'VOS@50eten', 'Contact Hexioners.be ' . $this->input->post('subject'), 'Geschreven door: ' . ucfirst($this->input->post('name')) . '</br>'
+                        . 'Email: <a href="mailto:' . $this->input->post('email') . '">Send back</a><br/>'
+                        . $this->input->post('message')
+                );
+                if (!$result) { //Model did not insert data in database
+                    $error = 'Bericht kon niet verzonden worden, probeer het zodadelijk nogmaals';
+                    $this->contact($error);
+                } else {
+                    $this->session->set_flashdata('message', 'Bericht verzonden, je krijgt ASAP een antwoord');
+                    redirect('welcome/message');
+                }
             }
         }
     }
-    
+
 }
