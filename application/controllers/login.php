@@ -170,7 +170,10 @@ class Login extends CI_Controller {
                     }
                     // Send them email
                     $this->load->model('email_model');
-                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 'VOS@50eten', $email, 'Reset paswoord Hexioners.be', 'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.'
+                    $result = $this->email_model->mail('do-not-reply@hexioners.be', 
+                            'VOS@50eten', 'Reset paswoord Hexioners.be', 
+                            'Hallo ' . $username . ', <br/> je nieuwe wachtwoord is <b>' . $result['password'] . '</b>.', 
+                            $email
                     );
                     if (!$result) {
                         $error = 'De mailserver is even ziek, probeer later opnieuw';

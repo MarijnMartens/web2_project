@@ -13,7 +13,7 @@ if (!defined('BASEPATH'))
 
 class Email_model extends CI_Model {
 
-    public function mail($username, $password, $to = null, $subject, $message) {
+    public function mail($username, $password, $subject, $message, $to = null) {
         require 'application/third_party/PHPMailer-master/class.phpmailer.php';
 
         if ($to == null) {
