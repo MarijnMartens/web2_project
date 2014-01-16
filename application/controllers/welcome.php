@@ -68,6 +68,7 @@ class Welcome extends CI_Controller {
     public function contact($error = NULL) {
         //Call for methods
         $this->load->library('form_validation');
+         $this->load->library('MyCaptcha');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
 
         //Input field validation
@@ -94,7 +95,6 @@ class Welcome extends CI_Controller {
         //Validation form
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Contact'];
-            $this->load->library('MyCaptcha');
             $captcha = $this->mycaptcha->showCaptcha();
             $bodyData['error'] = $error;
             $bodyData['captcha'] = $captcha;
@@ -103,28 +103,31 @@ class Welcome extends CI_Controller {
             $this->load->view('contact_view', $bodyData);
             $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
-            require_once("application/third_party/ayah/ayah.php");
-            $ayah = new AYAH();
-            $score = $ayah->scoreResult();
-            if (!$score) {
-                $error = 'We konden niet vaststelen dat je een mens bent, probeer nogmaals';
+            $captcha = $this->mycaptcha->validateCaptcha();
+            if (!$captcha){
+                $error = 'We konden niet vaststellen dat je een mens bent, probeer nogmaals';
                 $this->contact($error);
+                /*$this->session->set_flashdata('message', 'mislukt');
+                    redirect('welcome/message');*/
             } else {
-                $this->load->model('email_model');
+                /*$this->load->model('email_model');
                 $result = $this->email_model->mail(
                         'contact@hexioners.be', 'VOS@50eten', 'Contact Hexioners.be ' . $this->input->post('subject'), 'Geschreven door: ' . ucfirst($this->input->post('name')) . '</br>'
                         . 'Email: <a href="mailto:' . $this->input->post('email') . '">Send back</a><br/>'
-                        . $this->input->post('message')
+                        . nl2br($this->input->post('message'))
                 );
                 if (!$result) { //Model did not insert data in database
                     $error = 'Bericht kon niet verzonden worden, probeer het zodadelijk nogmaals';
                     $this->contact($error);
-                } else {
+                } else {*/
                     $this->session->set_flashdata('message', 'Bericht verzonden, je krijgt ASAP een antwoord');
                     redirect('welcome/message');
-                }
+               /* }*/
             }
         }
+    }
+    public function contactProcess(){
+        
     }
 
 }
