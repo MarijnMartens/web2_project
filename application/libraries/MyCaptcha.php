@@ -9,9 +9,8 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 
 class MyCaptcha {
-
     //
-    public function showCaptcha($data) {
+    public function showCaptcha() {
         //instantiate
         $CI = & get_instance();
         if (!$CI->session->userdata('validated')) {
