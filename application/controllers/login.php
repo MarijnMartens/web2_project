@@ -21,9 +21,11 @@ class Login extends CI_Controller {
     public function index($error = NULL) {
         $headerData = ['title' => 'Login'];
         $bodyData['error'] = $error;
-        $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('login_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
+        $this->load->view('login/login_view', $bodyData);
+        $this->load->view('template/tmpFooter_view');
     }
 
     public function login_process() {
@@ -84,9 +86,11 @@ class Login extends CI_Controller {
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Register'];
             $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
-            $this->load->view('register_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+            $this->load->view('template/tmpHeader_view', $headerData);
+            $pageData = ['aside_visible' => 'false'];
+            $this->load->view('template/tmpPage_view', $pageData);
+            $this->load->view('login/register_view', $bodyData);
+            $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
             $this->load->model('register_model');
             $result = $this->register_model->setUsers(
@@ -116,9 +120,11 @@ class Login extends CI_Controller {
     public function password_forget($error = NULL){
         $headerData = ['title' => 'Vraag nieuw paswoord aan'];
         $bodyData['error'] = $error;
-        $this->load->view('tmpHeader_view', $headerData);
-        $this->load->view('passwordReset_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
+        $this->load->view('login/passwordReset_view', $bodyData);
+        $this->load->view('template/tmpFooter_view');
     }
 
     //Forgot password

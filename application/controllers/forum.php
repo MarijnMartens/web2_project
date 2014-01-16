@@ -70,9 +70,10 @@ class Forum extends CI_Controller {
         $headerData = ['title' => 'Forum'];
         //Send array to view
         $bodyData['forums'] = $data;
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('forum/forum_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //Display list of topics
@@ -141,9 +142,11 @@ class Forum extends CI_Controller {
         $bodyData['count'] = $count;
         //keep forum_id for insert new topic
         $this->session->set_flashdata('forum_id', $forum_id);
-        //$this->load->view('tmpHeader_view', $headerData);
+        //$this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
         $this->load->view('forum/topic_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //insert new topic
@@ -152,7 +155,7 @@ class Forum extends CI_Controller {
         $forum_id = $this->session->flashdata('forum_id');
         echo $forum_id;
         //check if user can create a topic
-        //$this->myaccess->insertTopic();
+        $this->myaccess->insertTopic();
         //security measure to find url tampering when no argument is entered
         $libraryData = array('argument' => $forum_id, 'flash' => $forum_id);
         $this->myaccess->missingArguments($libraryData); 
@@ -176,9 +179,11 @@ class Forum extends CI_Controller {
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Nieuw Topic'];
             $bodyData['error'] = $error;
-            $this->load->view('tmpHeader_view', $headerData);
+            $this->load->view('template/tmpHeader_view', $headerData);
+            $pageData = ['aside_visible' => 'false'];
+            $this->load->view('template/tmpPage_view', $pageData);
             $this->load->view('forum/insertTopic_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+            $this->load->view('template/tmpFooter_view');
             //keep flashdata for another run
             $this->session->keep_flashdata('forum_id');
         } else { //Validation is OK, open model to insert new topic
@@ -219,9 +224,11 @@ class Forum extends CI_Controller {
         //set topic_id so we can throw it to insertReply
         $this->session->set_flashdata('topic_id', $topic_id);
         $headerData = ['title' => 'Replies'];
-        //$this->load->view('tmpHeader_view', $headerData);
+        //$this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
         $this->load->view('forum/reply_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //insert new reply
@@ -255,9 +262,11 @@ class Forum extends CI_Controller {
             //First load or form is bad
             $headerData = ['title' => 'Nieuw Reply'];
             $bodyData['error'] = $error;
-           // $this->load->view('tmpHeader_view', $headerData);
+           // $this->load->view('template/tmpHeader_view', $headerData);
+            $pageData = ['aside_visible' => 'false'];
+            $this->load->view('template/tmpPage_view', $pageData);
             $this->load->view('forum/insertReply_view', $bodyData);
-            $this->load->view('tmpFooter_view');
+            $this->load->view('template/tmpFooter_view');
             //Keep topic_id for another run
             $topic_id = $this->session->keep_flashdata('topic_id');
         } else { //Validation is OK, open model to insert new topic
@@ -312,9 +321,11 @@ class Forum extends CI_Controller {
         $bodyData['msg'] = $reply_message;
         $this->session->set_flashdata('reply_id', $reply_id);
         $this->session->set_flashdata('message_old', $reply_message);
-       // $this->load->view('tmpHeader_view', $headerData);
+       // $this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
         $this->load->view('forum/editReply_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //push edited reply to database
@@ -364,9 +375,11 @@ class Forum extends CI_Controller {
         $headerData = ['title' => 'Delete topic'];
         $bodyData['topic_title'] = $this->topic_model->getData($topic_id)->title;
         $this->session->set_flashdata('topic_id', $topic_id);
-        //$this->load->view('tmpHeader_view', $headerData);
+        //$this->load->view('template/tmpHeader_view', $headerData);
+        $pageData = ['aside_visible' => 'false'];
+        $this->load->view('template/tmpPage_view', $pageData);
         $this->load->view('forum/deleteTopic_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //Process deletion of topic

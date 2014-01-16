@@ -17,7 +17,7 @@ class Profile extends BaseController {
         $this->load->model('login_model');
         $bodyData['userdata'] = $this->login_model->getUserdata($this->session->userdata('user_id'));
         //getUserData failed
-        if(!$bodyData['userdata']){
+        if (!$bodyData['userdata']) {
             $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
             redirect('welcome/message');
         }
@@ -25,9 +25,10 @@ class Profile extends BaseController {
         $this->session->set_flashdata('userdata', $bodyData['userdata']);
         //Display profilepage
         $headerData = ['title' => 'Profile'];
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('profile/profile_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
 
     //edit non-critical user information
@@ -50,7 +51,7 @@ class Profile extends BaseController {
         if ($userdata->gender == 'm') {
             $sexM = true;
             $sexF = false;
-        } else if($userdata->gender == 'f') {
+        } else if ($userdata->gender == 'f') {
             $sexM = false;
             $sexF = true;
         } else {
@@ -84,36 +85,33 @@ class Profile extends BaseController {
             'genderF' => $genderF,
             'city' => $city
         );
-        $this->load->view('tmpHeader_view', $headerData);
+        $this->load->view('template/tmpHeader_view', $headerData);
+        $this->load->view('template/tmpPage_view');
         $this->load->view('profile/edit_view', $bodyData);
-        $this->load->view('tmpFooter_view');
+        $this->load->view('template/tmpFooter_view');
     }
-    
+
     //save non-critical user information
-    public function save(){
+    public function save() {
         //get all fields, xss filter
         $this->input->post(NULL, TRUE);
-        
+        //format errors
         $this->load->library('form_validation');
         $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
-
         //Input field validation
         $this->form_validation->set_rules(
-                'fName', 'Voornaam',
-                'min_length[2]|'
+                'fName', 'Voornaam', 'min_length[2]|'
                 . 'max_length[20]|'
         );
         $this->form_validation->set_rules(
-                'lName', 'Achternaam',
-                'min_length[2]|'
+                'lName', 'Achternaam', 'min_length[2]|'
                 . 'max_length[20]|'
         );
         $this->form_validation->set_rules(
-                'fName', 'Voornaam',
-                'min_length[2]|'
+                'fName', 'Voornaam', 'min_length[2]|'
                 . 'max_length[20]|'
         );
-        
+
         //Validation form
         if ($this->form_validation->run() == FALSE) {
             $this->edit();
@@ -130,20 +128,14 @@ class Profile extends BaseController {
             //process changes
             $this->load->model('register_model');
             $result = $this->register_model->editProfile(
-                    $this->session->userdata('user_id'),
-                    $fName,
-                    $lName,
-                    $dateOfBirth,
-                    $gender,
-                    $city
-                    );
+                    $this->session->userdata('user_id'), $fName, $lName, $dateOfBirth, $gender, $city
+            );
             if (!$result) { //Model did not insert data in database
                 $error = 'Invoer in database is mislukt';
                 $this->edit($error);
             } else {
                 $this->index();
             }
-            
         }
     }
 
