@@ -8,7 +8,7 @@ if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 ?>
 
-<?php echo form_open('welcome/contact'); ?>
+<?php echo form_open('welcome/contactProcess'); ?>
 <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
 <table>
     <tr>

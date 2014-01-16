@@ -37,10 +37,10 @@ class MyCaptcha {
         //instantiate
         $CI = & get_instance();
         if ($CI->session->userdata('validated')) {
-            return false;
+            return true;
         } else {
             if ($score) {
-                return false;
+                return true;
             } else {
                 return false;
             }
