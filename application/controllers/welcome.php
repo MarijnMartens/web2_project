@@ -94,7 +94,10 @@ class Welcome extends CI_Controller {
         //Validation form
         if ($this->form_validation->run() == FALSE) {
             $headerData = ['title' => 'Contact'];
+            $this->load->library('MyCaptcha');
+            $captcha = $this->mycaptcha->showCaptcha();
             $bodyData['error'] = $error;
+            $bodyData['captcha'] = $captcha;
             $this->load->view('template/tmpHeader_view', $headerData);
             $this->load->view('template/tmpPage_view');
             $this->load->view('contact_view', $bodyData);
