@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Author: Marijn
  * Created on: 11/01/2014
@@ -7,9 +6,13 @@
 
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
-
 ?>
-
+<?php
+// Instantiate the AYAH object. You need to instantiate the AYAH object
+// on each page that is using PlayThru.
+require_once("application/third_party/ayah/ayah.php");
+$ayah = new AYAH();
+?>
 <?php echo form_open('welcome/contact'); ?>
 <?php if (!is_null($error)) echo "<span class='error'>$error</span><br/>"; ?>
 <table>
@@ -32,7 +35,10 @@ if (!defined('BASEPATH'))
         <td><label for="message">Bericht Inhoud</label></td>
         <td><textarea name="message" rows="10" cols="80" wrap="soft" placeholder="Bericht"><?php echo set_value('message'); ?></textarea></td>
     </tr>
-   
+    <tr>
+        <td>Voer de captcha uit</td>
+        <td><?php echo $ayah->getPublisherHTML(); ?></td>
+    </tr>
     <tr>
         <td colspan="3"><input type="submit" value="Stuur bericht naar Admin" /></td>
     </tr>

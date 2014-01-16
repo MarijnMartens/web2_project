@@ -98,6 +98,13 @@ class Welcome extends CI_Controller {
             $this->load->view('contact_view', $bodyData);
             $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
+            require_once("application/third_party/ayah/ayah.php");
+$ayah = new AYAH();
+$score = $ayah->scoreResult();
+            if(!$score){
+                $error = 'We konden niet vaststelen dat je een mens bent, probeer nogmaals';
+                $this->contact($error);
+            }
             $this->load->model('email_model');
             $result = $this->email_model->mail(
                     'contact@hexioners.be', 'VOS@50eten', 'Contact Hexioners.be ' . $this->input->post('subject'),
@@ -115,8 +122,4 @@ class Welcome extends CI_Controller {
         }
     }
     
-    public function captcha(){
-        $this->load->view('sample');
-    }
-
 }
