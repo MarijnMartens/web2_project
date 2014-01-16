@@ -72,3 +72,4 @@ References: none
                     <li><a href="<?php echo base_url('welcome/contact'); ?>">Contact</a></li>
                 </ul>
         </header>
+        <h1>OUD VERVANG DOOR TEMPLATE/TMPHEADER_VIEW !!!</h1>

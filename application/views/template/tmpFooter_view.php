@@ -8,8 +8,8 @@ References: none
 
 <footer>
     <p>
-            <!--<script type="text/javascript" src="//tracedseals.starfieldtech.com/siteseal/get?scriptId=cdSiteSeal1&amp;cdSealType=Seal1&amp;sealId=55e4ye7y7mb73a437e7990a926169d11m6y7mb7355e4ye774dd2df7c6b547922"></script>-->
-            &copy; 2013 - 2014 &#8226; Hexioners.be
+        <!--<script type="text/javascript" src="//tracedseals.starfieldtech.com/siteseal/get?scriptId=cdSiteSeal1&amp;cdSealType=Seal1&amp;sealId=55e4ye7y7mb73a437e7990a926169d11m6y7mb7355e4ye774dd2df7c6b547922"></script>-->
+        &copy; 2013 - 2014 &#8226; Hexioners.be
     </p>
 </footer>    
 </body>
