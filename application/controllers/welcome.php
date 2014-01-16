@@ -116,7 +116,7 @@ class Welcome extends CI_Controller {
     }
     
     public function captcha(){
-        $this->load->view('captcha');
+        $this->load->view('sample');
     }
 
 }
