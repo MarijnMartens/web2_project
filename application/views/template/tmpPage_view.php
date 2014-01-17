@@ -36,9 +36,12 @@ if(!(isset($aside_visible))){
     });
 </script>
 
-<section>
+<?php 
+//Load custom view, done this way to display a view within this template view
+//This way I can create multiple 'island', need for ie the homepage
+$this->load->view($view);
+?>
 
-</section>
 <aside <?php echo $aside_display; ?>>
     <div id="twitter"><!-- Start Twitter timeline -->
         <div id="twitter-timeline"

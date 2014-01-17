@@ -5,7 +5,7 @@ Last modified on: 26/12/2013
 Edit: 04/01/2014: Twitter Timeline implentation
 References: Official Twitter developer manual
 -->
-
+<section>
     <article>Demonstratie inklappen eiland <span style="font-size: 0.5em;">▲</span></article> <!-- bij klikken valt style weg -->
     <table>
         <tr>
@@ -21,3 +21,8 @@ References: Official Twitter developer manual
             <td>row 3 col 2 with extra long text</td>
         </tr>
     </table>
+</section>
+<section>
+    <h1>sectie2</h1>
+    <p>paragraaf</p>
+</section>

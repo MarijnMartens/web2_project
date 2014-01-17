@@ -19,12 +19,12 @@ class Login extends CI_Controller {
 
     //inloggen
     public function index($error = NULL) {
-        $headerData = ['title' => 'Login'];
+        $headerData['title'] = 'Login';
         $bodyData['error'] = $error;
         $this->load->view('template/tmpHeader_view', $headerData);
-        $pageData = ['aside_visible' => 'false'];
-        $this->load->view('template/tmpPage_view', $pageData);
-        $this->load->view('login/login_view', $bodyData);
+        $bodyData['aside_visible'] = 'false';
+        $bodyData['view'] = 'login/login_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
@@ -84,12 +84,12 @@ class Login extends CI_Controller {
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
-            $headerData = ['title' => 'Register'];
+            $headerData['title'] = 'Register';
             $bodyData['error'] = $error;
             $this->load->view('template/tmpHeader_view', $headerData);
-            $pageData = ['aside_visible' => 'false'];
-            $this->load->view('template/tmpPage_view', $pageData);
-            $this->load->view('login/register_view', $bodyData);
+            $bodyData['aside_visible'] = 'false';
+            $bodyData['view'] = 'login/register_view';
+            $this->load->view('template/tmpPage_view', $bodyData);
             $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
             $this->load->model('register_model');
@@ -121,14 +121,14 @@ class Login extends CI_Controller {
         //call captcha-library
         $this->load->library('MyCaptcha');
         //Display page
-        $headerData = ['title' => 'Vraag nieuw paswoord aan'];
+        $headerData['title'] = 'Vraag nieuw paswoord aan';
         $captcha = $this->mycaptcha->showCaptcha();
         $bodyData['error'] = $error;
         $bodyData['captcha'] = $captcha;
         $this->load->view('template/tmpHeader_view', $headerData);
-        $pageData = ['aside_visible' => 'false'];
-        $this->load->view('template/tmpPage_view', $pageData);
-        $this->load->view('login/passwordReset_view', $bodyData);
+        $bodyData['aside_visible'] = 'false';
+        $bodyData['view'] = 'login/passwordReset_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 

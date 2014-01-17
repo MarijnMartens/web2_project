@@ -13,12 +13,12 @@ if (!defined('BASEPATH'))
 <table>
     <tr>
         <td><label for="name">Naam</label></td>
-        <td><input type="text" name="name" placeholder="Naam" value="<?php echo set_value('name'); ?>" size="20" /></td>
+        <td><input type="text" name="name" placeholder="Naam" value="<?php echo $this->session->userdata('fName'); echo set_value('name'); ?>" size="20" /></td>
         <td><?php echo form_error('name'); ?></td>
     </tr>
     <tr>
         <td><label for="email">Email Adres</label></td>
-        <td><input type="text" name="email" placeholder="Email" value="<?php echo set_value('email'); ?>" size="20" /></td>
+        <td><input type="text" name="email" placeholder="Email" value="<?php echo $this->session->userdata('email'); echo set_value('email'); ?>" size="20" /></td>
         <td><?php echo form_error('email'); ?></td>
     </tr>
     <tr>

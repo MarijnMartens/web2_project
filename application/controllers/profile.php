@@ -24,10 +24,10 @@ class Profile extends BaseController {
         //insert all userdata in flash
         $this->session->set_flashdata('userdata', $bodyData['userdata']);
         //Display profilepage
-        $headerData = ['title' => 'Profile'];
+        $headerData['title'] = 'Profile';
+        $bodyData['view'] = 'profile/profile_view';
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('profile/profile_view', $bodyData);
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
@@ -76,7 +76,7 @@ class Profile extends BaseController {
             'value' => $userdata->city
         );
 
-        $headerData = ['title' => 'Edit profile'];
+        $headerData['title'] = 'Edit profile';
         $bodyData['userdata'] = array(
             'fName' => $fName,
             'lName' => $lName,
@@ -85,9 +85,9 @@ class Profile extends BaseController {
             'genderF' => $genderF,
             'city' => $city
         );
+        $bodyData['view'] = 'profile/edit_view';
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('profile/edit_view', $bodyData);
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 

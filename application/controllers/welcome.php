@@ -21,48 +21,35 @@ class Welcome extends CI_Controller {
         } catch (Exception $ex) {
             $msg = 'Intern iets misgelopen';
         }
-        $bodyData = ['message' => $msg];
+        $bodyData['message'] = $msg;
+        $bodyData['view'] = 'message_view';
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('message_view', $bodyData);
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
     public function index() {
         $headerData = ['title' => 'Index'];
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('index_view');
+        $bodyData['view'] = 'index_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
     public function info() {
         $headerData = ['title' => 'Info'];
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('info_view');
-        $this->load->view('template/tmpFooter_view');
-    }
-
-    public function forum() {
-        $headerData = ['title' => 'Forum'];
-        $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('forum_view');
+        $bodyData['view'] = 'info_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
     public function event() {
         $headerData = ['title' => 'Events'];
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('event_view');
+        $bodyData['view'] = 'event_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
-    }
-
-    //decrapicated i believe
-    public function login() {
-        redirect(login);
     }
 
     //Load contact form or redisplay when false input / captcha failed
@@ -77,8 +64,8 @@ class Welcome extends CI_Controller {
         $bodyData['error'] = $error;
         $bodyData['captcha'] = $captcha;
         $this->load->view('template/tmpHeader_view', $headerData);
-        $this->load->view('template/tmpPage_view');
-        $this->load->view('contact_view', $bodyData);
+        $bodyData['view'] = 'contact_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
         $this->load->view('template/tmpFooter_view');
     }
 
