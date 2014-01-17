@@ -45,9 +45,11 @@ class Register_model extends CI_Model {
         $this->db->where('id', $user_id);
         $this->db->update('user', $data);
         $query = $this->db->affected_rows();
-
         if ($query == 1 || $query == 0) {
-            return TRUE;
+                $userdata = $this->session->all_userdata();
+                $userdata['fName'] = ucfirst($fName);
+                $this->session->set_userdata($userdata);
+                return TRUE;
         } else {
             return FALSE;
         }
