@@ -19,13 +19,11 @@ class Login extends CI_Controller {
 
     //inloggen
     public function index($error = NULL) {
-        $headerData['title'] = 'Login';
+        $bodyData['title'] = 'Login';
         $bodyData['error'] = $error;
-        $this->load->view('template/tmpHeader_view', $headerData);
         $bodyData['aside_visible'] = 'false';
         $bodyData['view'] = 'login/login_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     public function login_process() {
@@ -84,13 +82,11 @@ class Login extends CI_Controller {
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
-            $headerData['title'] = 'Register';
+            $bodyData['title'] = 'Register';
             $bodyData['error'] = $error;
-            $this->load->view('template/tmpHeader_view', $headerData);
             $bodyData['aside_visible'] = 'false';
             $bodyData['view'] = 'login/register_view';
             $this->load->view('template/tmpPage_view', $bodyData);
-            $this->load->view('template/tmpFooter_view');
         } else { //Validation is OK, open model to insert new user
             $this->load->model('register_model');
             $result = $this->register_model->setUsers(
@@ -121,15 +117,13 @@ class Login extends CI_Controller {
         //call captcha-library
         $this->load->library('MyCaptcha');
         //Display page
-        $headerData['title'] = 'Vraag nieuw paswoord aan';
+        $bodyData['title'] = 'Vraag nieuw paswoord aan';
         $captcha = $this->mycaptcha->showCaptcha();
         $bodyData['error'] = $error;
         $bodyData['captcha'] = $captcha;
-        $this->load->view('template/tmpHeader_view', $headerData);
         $bodyData['aside_visible'] = 'false';
         $bodyData['view'] = 'login/passwordReset_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     //Forgot password

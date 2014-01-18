@@ -14,7 +14,7 @@ if (!defined('BASEPATH'))
 class Welcome extends CI_Controller {
 
     public function message() {
-        $headerData = ['title' => 'Boodschap van algemeen nut'];
+        $bodyData['title'] = 'Boodschap van algemeen nut';
         //If we forget to set up a flash_session
         try {
             $msg = $this->session->flashdata('message');
@@ -23,33 +23,25 @@ class Welcome extends CI_Controller {
         }
         $bodyData['message'] = $msg;
         $bodyData['view'] = 'message_view';
-        $this->load->view('template/tmpHeader_view', $headerData);
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     public function index() {
-        $headerData = ['title' => 'Index'];
-        $this->load->view('template/tmpHeader_view', $headerData);
+        $bodyData['title'] = 'Index';
         $bodyData['view'] = 'index_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     public function info() {
-        $headerData = ['title' => 'Info'];
-        $this->load->view('template/tmpHeader_view', $headerData);
+        $bodyData['title'] = 'Info';
         $bodyData['view'] = 'info_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     public function event() {
-        $headerData = ['title' => 'Events'];
-        $this->load->view('template/tmpHeader_view', $headerData);
+        $bodyData['title'] = 'Events';
         $bodyData['view'] = 'event_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     //Load contact form or redisplay when false input / captcha failed
@@ -59,14 +51,12 @@ class Welcome extends CI_Controller {
         //Call form validation-library
         $this->load->library('form_validation');
         //Display page
-        $headerData = ['title' => 'Contact'];
+        $bodyData['title'] = 'Contact';
         $captcha = $this->mycaptcha->showCaptcha();
         $bodyData['error'] = $error;
         $bodyData['captcha'] = $captcha;
-        $this->load->view('template/tmpHeader_view', $headerData);
         $bodyData['view'] = 'contact_view';
         $this->load->view('template/tmpPage_view', $bodyData);
-        $this->load->view('template/tmpFooter_view');
     }
 
     //process contact

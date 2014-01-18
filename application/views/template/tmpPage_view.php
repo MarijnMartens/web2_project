@@ -7,6 +7,13 @@
 if (!defined('BASEPATH'))
     exit('No direct script access allowed');
 ?>
+
+<?php 
+//Load custom view, done this way to display a view within this template view
+//This way I can create multiple 'island', need for ie the homepage
+$this->load->view('template/tmpHeader_view');
+?>
+
 <?php 
 if(!(isset($aside_visible))){
     $aside_display = '';
@@ -64,3 +71,9 @@ $this->load->view($view);
             }(document, "script", "twitter-wjs");</script>
     </div><!-- End Twitter timeline -->
 </aside>
+
+<?php 
+//Load custom view, done this way to display a view within this template view
+//This way I can create multiple 'island', need for ie the homepage
+$this->load->view('template/tmpFooter_view');
+?>
