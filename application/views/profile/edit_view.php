@@ -10,6 +10,7 @@ if (!defined('BASEPATH'))
 ?>
 
 <h2>Edit profile</h2>
+<?php echo $error; ?>
 <?php
 $this->load->helper('form');
 $this->load->helper('date');
@@ -18,7 +19,10 @@ $months = array(1 => 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Ju
 for($i = date('Y')-16; $i >= date('Y')-70; $i--){
             $years[$i] = $i;
 }
-echo form_open('profile/save');
+echo form_open_multipart('profile/save');
+echo form_label('Avatar', 'userfile');
+echo form_upload($userdata['avatar']);
+echo '<br/>';
 echo form_label('Voornaam', 'fName');
 echo form_input($userdata['fName']);
 echo '<br/>';

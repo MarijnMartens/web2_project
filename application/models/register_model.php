@@ -34,22 +34,33 @@ class Register_model extends CI_Model {
         }
     }
 
-    function editProfile($user_id, $fName = null, $lName = null, $dateOfBirth, $gender = null, $city = null) {
-        $data = array(
-            'fName' => ucfirst($fName),
-            'lName' => ucfirst($lName),
-            'dateOfBirth' => $dateOfBirth,
-            'gender' => $gender,
-            'city' => ucfirst($city)
-        );
+    function editProfile($user_id, $fName = null, $lName = null, $dateOfBirth, $gender = null, $city = null, $file_name) {
+        if ($file_name == '') {
+            $data = array(
+                'fName' => ucfirst($fName),
+                'lName' => ucfirst($lName),
+                'dateOfBirth' => $dateOfBirth,
+                'gender' => $gender,
+                'city' => ucfirst($city)
+            );
+        } else {
+            $data = array(
+                'fName' => ucfirst($fName),
+                'lName' => ucfirst($lName),
+                'dateOfBirth' => $dateOfBirth,
+                'gender' => $gender,
+                'city' => ucfirst($city),
+                'avatar' => $file_name
+            );
+        }
+
         $this->db->where('id', $user_id);
         $this->db->update('user', $data);
         $query = $this->db->affected_rows();
         if ($query == 1 || $query == 0) {
-                $userdata = $this->session->all_userdata();
-                $userdata['fName'] = ucfirst($fName);
-                $this->session->set_userdata($userdata);
-                return TRUE;
+            $userdata = $this->session->all_userdata();
+            $this->session->set_userdata($userdata);
+            return TRUE;
         } else {
             return FALSE;
         }

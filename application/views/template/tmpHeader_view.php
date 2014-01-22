@@ -28,16 +28,16 @@ if (!defined('BASEPATH'))
     <body>
         <header>
             <!-- Get logo -->
-            <a href="<?php echo base_url('welcome/index'); ?>"><img src="../assets/images/logo.png" alt="logo" height="100"/><a/>
+            <a href="<?php echo base_url('welcome'); ?>"><img src="../assets/images/logo.png" alt="logo" height="100"/><a/>
             <div id='login_menu'>
                 <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
-                    <li><a href="<?php echo base_url('login/index'); ?>">Login</a></li>
+                    <li><a href="<?php echo base_url('login'); ?>">Login</a></li>
                     <li><a href="<?php echo base_url('login/register'); ?>">Registreer</a></li>
                 </ul>
             </div><!-- End login-menu -->
             <div id ='user_menu'><!-- Start user-menu -->
                 <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
-                    <li><a href="<?php echo base_url('profile/index'); ?>">Profiel</a></li>
+                    <li><a href="<?php echo base_url('profile'); ?>">Profiel</a></li>
                     <li>messenger</li>
                     <li><a href="<?php echo base_url('profile/all'); ?>">Ledenlijst</a></li>
                     <li>notifications</li>
@@ -46,11 +46,17 @@ if (!defined('BASEPATH'))
             </div><!-- End user-menu -->
             <div id='menu'><!-- Start menu --> 
                 <ul id="menu">
-                    <li><a href="<?php echo base_url('welcome/index'); ?>">Startpagina</a></li>
-                    <li><a href="<?php echo base_url('forum/index'); ?>">Forum</a></li>
-                    <li><a href="<?php echo base_url('event/index'); ?>">Evenementen</a></li>
+                    <li><a href="<?php echo base_url('welcome'); ?>">Startpagina</a></li>
+                    <li><a href="<?php echo base_url('forum'); ?>">Forum</a></li>
+                    <li><a href="<?php echo base_url('event'); ?>">Evenementen</a></li>
                     <li><a href="<?php echo base_url('welcome/info'); ?>">Info</a></li>
                     <li><a href="<?php echo base_url('welcome/contact'); ?>">Contact</a></li>
+                    <li><a href="<?php echo base_url('welcome/multimedia'); ?>">Multimedia</a></li>                    
                 </ul>
+                <!-- Search form -->
+                <form action="<?php echo base_url('search'); ?>" method="post">
+                    <input type="text" name="search" placeholder="Zoeken" size="25"/>
+                    <input type="submit" name="submit" value="Zoeken"/>
+                </form>
             </div><!-- End meu -->
         </header>

@@ -73,15 +73,21 @@ class Profile extends BaseController {
             'id' => 'city',
             'value' => $userdata->city
         );
+        $avatar = array(
+            'name' => 'userfile',
+            'id' => 'userfile'
+        );
 
         $bodyData['title'] = 'Edit profile';
+        $bodyData['error'] = $error;
         $bodyData['userdata'] = array(
             'fName' => $fName,
             'lName' => $lName,
             'dateOfBirth' => $dateOfBirth,
             'genderM' => $genderM,
             'genderF' => $genderF,
-            'city' => $city
+            'city' => $city,
+            'avatar' => $avatar
         );
         $bodyData['view'] = 'profile/edit_view';
         $this->load->view('template/tmpPage_view', $bodyData);
@@ -121,15 +127,48 @@ class Profile extends BaseController {
             $city = $this->input->post('city');
             $dateOfBirth = array($year, $month, $day);
             $dateOfBirth = implode('-', $dateOfBirth);
+            //upload avatar
+            $config['upload_path'] = './assets/images/avatars/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $config['max_size'] = '500';
+            $config['max_width'] = '2000';
+            $config['max_height'] = '1300';
+
+            $this->load->library('upload', $config);
+            //check if a new avatar is provided
+            if (!empty($_FILES['userfile']['name'])) {
+                if (!$this->upload->do_upload()) {
+                    $error = $this->upload->display_errors();
+                    // print_r($error);
+                   //geeft lege ingevulde forms terug en errors omdat de oude data niet meer bestaat
+                    $this->edit($error);
+                } else {
+                    $upload_data = $this->upload->data();
+                    $file_name = $upload_data['file_name'];
+                    //print_r($data);
+                }
+                //no new avatar selected
+            } else {
+                $file_name = null;
+            }
+
+
+
+
             //process changes
             $this->load->model('register_model');
             $result = $this->register_model->editProfile(
-                    $this->session->userdata('user_id'), $fName, $lName, $dateOfBirth, $gender, $city
+                    $this->session->userdata('user_id'), $fName, $lName, $dateOfBirth, $gender, $city, $file_name
             );
+
+            //check update database
             if (!$result) { //Model did not insert data in database
                 $error = 'Invoer in database is mislukt';
-                $this->edit($error);
+                //$this->edit($error);
+                $this->session->set_flashdata('message', $error);
+                redirect('welcome/message');
             } else {
+                //display profile after edit
                 $this->index();
             }
         }

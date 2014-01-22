@@ -20,6 +20,7 @@ if ($userdata->gender == 'm') {
 }
 $dateOfBirth = $userdata->dateOfBirth;
 $dateOfBirth2 = explode('-', $dateOfBirth);
+echo '<img src="assets/images/avatars/' . $userdata->avatar . '" height="150" width="150" alt="Avatar"/><br/>'; 
 echo 'Voornaam ' . $userdata->fName . '<br/>';
 echo 'Achternaam ' . $userdata->lName . '<br/>';
 if ($dateOfBirth != '') {
@@ -32,6 +33,6 @@ echo 'Geslacht ' . $gender . '<br/>';
 echo 'Regio ' . $userdata->city . '<br/>';
 ?>
 
-<a href="edit">Pas gegevens aan</a>
+<a href="<?PHP echo base_url('profile/edit'); ?>">Pas gegevens aan</a>
 <br/>
-<a href="editLogin">Pas wachtwoord aan</a>
+<a href="<?PHP echo base_url('welcome/editLogin'); ?>">Pas wachtwoord aan</a>
