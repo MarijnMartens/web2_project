@@ -140,7 +140,7 @@ class Profile extends BaseController {
                 if (!$this->upload->do_upload()) {
                     $error = $this->upload->display_errors();
                     // print_r($error);
-                   //input forms in flashdata zetten
+                    //input forms in flashdata zetten
                     $userdata = array(
                         'fName' => $fName,
                         'lName' => $lName,
@@ -149,7 +149,7 @@ class Profile extends BaseController {
                         'dateOfBirth' => $dateOfBirth
                     );
                     $this->session->set_flashdata('userdata', $userdata);
-                    
+
                     $this->edit($error);
                 } else {
                     $upload_data = $this->upload->data();
@@ -178,6 +178,33 @@ class Profile extends BaseController {
                 redirect('profile');
             }
         }
+    }
+
+    public function all() {
+        $this->load->model('search_model');
+        $result = $this->search_model->getUsernames();
+
+        //array alphabet
+        $alphabet_keys = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 1);
+        //set values as keys with array as value
+        $alphabet = array();
+        foreach ($alphabet_keys as $letter) {
+            $alphabet[$letter] = array();
+        }
+        //get usernames, place in array corresponding begin letter
+        foreach ($result as $row) {
+            $username = $row->username;
+            for ($i = 'A'; $i != 'AA'; $i++) {
+                if(substr($username, 0, 1) == $i){
+                    array_push($alphabet[$i], $username);
+                }
+            }
+        }
+        print_r($alphabet);
+        /*
+          $bodyData['result'] = $result;
+          $bodyData['view'] = 'users_view';
+          $this->load->view('template/tmpPage_view', $bodyData); */
     }
 
 }

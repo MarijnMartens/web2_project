@@ -44,7 +44,6 @@ class Forum extends CI_Controller {
                 $topicTitle = $this->topic_model->getData($lastReply_result->topic_id)->title;
                 //a reply could be submitted by either a registered user or a guest, verify which of the 2
                 if ($lastReply_result->user_id != 0) {
-                    ;
                     $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
                 } else {
                     $replyUsername = 'Gast' . $lastReply_result->guest_id;
