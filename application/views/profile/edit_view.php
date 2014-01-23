@@ -52,7 +52,7 @@ echo '<br/>';
 echo form_submit('submit', 'Pas gegevens aan');
 echo form_close();
 //Do not change anyting
-echo form_open('profile/index');
+echo form_open('profile');
 echo form_submit('cancel', 'Annuleer');
 echo form_close();
 

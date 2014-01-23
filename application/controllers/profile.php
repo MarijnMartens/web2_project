@@ -140,7 +140,16 @@ class Profile extends BaseController {
                 if (!$this->upload->do_upload()) {
                     $error = $this->upload->display_errors();
                     // print_r($error);
-                   //geeft lege ingevulde forms terug en errors omdat de oude data niet meer bestaat
+                   //input forms in flashdata zetten
+                    $userdata = array(
+                        'fName' => $fName,
+                        'lName' => $lName,
+                        'gender' => $gender,
+                        'city' => $city,
+                        'dateOfBirth' => $dateOfBirth
+                    );
+                    $this->session->set_flashdata('userdata', $userdata);
+                    
                     $this->edit($error);
                 } else {
                     $upload_data = $this->upload->data();
@@ -151,9 +160,6 @@ class Profile extends BaseController {
             } else {
                 $file_name = null;
             }
-
-
-
 
             //process changes
             $this->load->model('register_model');
@@ -169,7 +175,7 @@ class Profile extends BaseController {
                 redirect('welcome/message');
             } else {
                 //display profile after edit
-                $this->index();
+                redirect('profile');
             }
         }
     }
