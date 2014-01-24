@@ -13,7 +13,7 @@ if (!defined('BASEPATH'))
 $months = array(1 => 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December');
 if ($userdata->gender == 'm') {
     $gender = 'Man';
-} else if ($userdata->gender == 'v') {
+} else if ($userdata->gender == 'f') {
     $gender = 'Vrouw';
 } else {
     $gender = '';
