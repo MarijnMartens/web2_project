@@ -2,6 +2,11 @@
     Created on : Dec 13, 2013, 4:18:17 PM
     Author     : Marijn
 */
+//display of avatar
+.avatar {
+    max-height: 250px;
+    max-width: 150px;
+}
 
 header {
     background-color:yellow;
