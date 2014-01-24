@@ -155,7 +155,7 @@ class Profile extends BaseController {
                     $upload_data = $this->upload->data();
                     $file_name = $upload_data['file_name'];
                     //print_r($data);
-                }
+                } 
                 //no new avatar selected
             } else {
                 $file_name = null;
@@ -196,7 +196,7 @@ class Profile extends BaseController {
             //Iterate from A to Z
             for ($i = 'A'; $i != 'AA'; $i++) {
                 if (substr($username, 0, 1) == $i) {
-                    array_push($alphabet[$i], $row/*array($row->id, $username)*/);
+                    array_push($alphabet[$i], $row/* array($row->id, $username) */);
                 }
             }
         }
@@ -205,10 +205,10 @@ class Profile extends BaseController {
         $bodyData['view'] = 'users_view';
         $this->load->view('template/tmpPage_view', $bodyData);
     }
-    
+
     //function to see other users info
     //like function index, kept apart for readability
-    public function view($user_id){
+    public function view($user_id) {
         $this->load->model('search_model');
         $user = $this->search_model->getUserdata($user_id);
         $bodyData['userdata'] = $user;

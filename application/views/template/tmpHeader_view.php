@@ -28,7 +28,7 @@ if (!defined('BASEPATH'))
     <body>
         <header>
             <!-- Get logo -->
-            <a href="<?php echo base_url('welcome'); ?>"><img src="../assets/images/logo.png" alt="logo" height="100"/><a/>
+            <a href="<?php echo base_url('welcome'); ?>"><img src="<?php echo base_url(); ?>assets/images/logo.png" alt="logo" height="100"/><a/>
             <div id='login_menu'>
                 <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
                     <li><a href="<?php echo base_url('login'); ?>">Login</a></li>
