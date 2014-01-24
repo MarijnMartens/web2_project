@@ -10,15 +10,26 @@ if (!defined('BASEPATH'))
 
 ?>
 
-s
-
 
 <table border="1">
 <?php
-foreach ($result as $row){
-    echo '<tr>';
-    echo '<td>' . $row->username . '</td>';
-    echo '</tr>';
+//Iterate through alphabet
+foreach($alphabet as $key => $letter){
+    //Search letters that are not empty
+    if ($letter != null){ 
+        echo '<th>';
+        echo $key;
+        echo '</th>';
+        //print usernames for matching letter
+        foreach($letter as $username){
+            echo '<tr>';
+            echo '<td>' . $username . '</td>';
+            echo '</tr>';
+        }
+    }
 }
+echo '<br/>';
+
+
 ?>
 </table>

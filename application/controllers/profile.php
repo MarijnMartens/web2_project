@@ -194,17 +194,17 @@ class Profile extends BaseController {
         //get usernames, place in array corresponding begin letter
         foreach ($result as $row) {
             $username = $row->username;
+            //Iterate from A to Z
             for ($i = 'A'; $i != 'AA'; $i++) {
                 if(substr($username, 0, 1) == $i){
                     array_push($alphabet[$i], $username);
                 }
             }
         }
-        print_r($alphabet);
-        /*
-          $bodyData['result'] = $result;
+          $bodyData['title'] = 'Ledenlijst';
+          $bodyData['alphabet'] = $alphabet;
           $bodyData['view'] = 'users_view';
-          $this->load->view('template/tmpPage_view', $bodyData); */
+          $this->load->view('template/tmpPage_view', $bodyData);
     }
 
 }
