@@ -183,7 +183,6 @@ class Profile extends BaseController {
     public function all() {
         $this->load->model('search_model');
         $result = $this->search_model->getUsernames();
-
         //array alphabet
         $alphabet_keys = str_split('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 1);
         //set values as keys with array as value
@@ -196,15 +195,32 @@ class Profile extends BaseController {
             $username = $row->username;
             //Iterate from A to Z
             for ($i = 'A'; $i != 'AA'; $i++) {
-                if(substr($username, 0, 1) == $i){
-                    array_push($alphabet[$i], $username);
+                if (substr($username, 0, 1) == $i) {
+                    array_push($alphabet[$i], $row/*array($row->id, $username)*/);
                 }
             }
         }
-          $bodyData['title'] = 'Ledenlijst';
-          $bodyData['alphabet'] = $alphabet;
-          $bodyData['view'] = 'users_view';
-          $this->load->view('template/tmpPage_view', $bodyData);
+        $bodyData['title'] = 'Ledenlijst';
+        $bodyData['alphabet'] = $alphabet;
+        $bodyData['view'] = 'users_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
+    }
+    
+    //function to see other users info
+    //like function index, kept apart for readability
+    public function view($user_id){
+        $this->load->model('search_model');
+        $user = $this->search_model->getUserdata($user_id);
+        $bodyData['userdata'] = $user;
+        //getUserData failed
+        if (!$bodyData['userdata']) {
+            $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
+            redirect('welcome/message');
+        }
+        //Display profilepage
+        $bodyData['title'] = 'Profiel van ' . $user->username;
+        $bodyData['view'] = 'profile/member_view';
+        $this->load->view('template/tmpPage_view', $bodyData);
     }
 
 }

@@ -36,7 +36,9 @@ class Login_model extends CI_Model {
         // then return false.
         return false;
     }
-    
+    //function to get ALL userdata 
+    //only do this when the user itself is logged in 
+    //(private email and password are send back too)
     public function getUserdata($user_id) {
         $this->db->where('id', $user_id);
         $query = $this->db->get('user');

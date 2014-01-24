@@ -18,12 +18,12 @@ foreach($alphabet as $key => $letter){
     //Search letters that are not empty
     if ($letter != null){ 
         echo '<th>';
-        echo $key;
+        echo '<a href="#">' . $key . '</a>';
         echo '</th>';
         //print usernames for matching letter
-        foreach($letter as $username){
+        foreach($letter as $userData){
             echo '<tr>';
-            echo '<td>' . $username . '</td>';
+            echo '<td><a href="' . base_url() . 'profile/view/' . $userData->id . '">'. $userData->username . '</a></td>';
             echo '</tr>';
         }
     }
