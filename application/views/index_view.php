@@ -6,7 +6,7 @@ Edit: 04/01/2014: Twitter Timeline implentation
 References: Official Twitter developer manual
 -->
 <section>
-    <article>Demonstratie inklappen eiland <span style="font-size: 0.5em;">▲</span></article> <!-- bij klikken valt style weg -->
+    <h1>Demonstratie inklappen eiland <span style="font-size: 0.5em;">▲</span></h1> <!-- bij klikken valt style weg -->
     <table>
         <tr>
             <td>row 1 col 1</td>

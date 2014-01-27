@@ -41,3 +41,8 @@ input {
     height: 500px;
     width: 200px;
 }
+
+.searchHeader{
+    background-color: #1c8017;
+    color: white;
+}
