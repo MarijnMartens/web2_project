@@ -3,9 +3,9 @@
     Author     : Marijn
 */
 //display of avatar
-.avatar {
+img.avatar {
     max-height: 250px;
-    max-width: 150px;
+    width: 150px;
 }
 
 header {

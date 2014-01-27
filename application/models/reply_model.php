@@ -14,7 +14,7 @@ if (!defined('BASEPATH'))
 class Reply_model extends CI_Model {
     //get all replies from one topic
     public function getReplies($topic_id) {
-        $this->db->select('reply.*, user.username');
+        $this->db->select('reply.*, user.id as user_id, user.username, user.avatar');
         $this->db->from('reply');
         $this->db->join('user', 'reply.user_id = user.id', 'left');
         $this->db->where('reply.topic_id', $topic_id);

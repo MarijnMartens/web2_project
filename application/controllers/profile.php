@@ -130,7 +130,7 @@ class Profile extends BaseController {
             //upload avatar
             $config['upload_path'] = './assets/images/avatars/';
             $config['allowed_types'] = 'gif|jpg|png';
-            $config['max_size'] = '500';
+            $config['max_size'] = '1024';
             $config['max_width'] = '2000';
             $config['max_height'] = '1300';
 

@@ -21,6 +21,7 @@ class Forum extends CI_Controller {
         $this->load->model('topic_model');
         $this->load->model('reply_model');
         $this->load->model('login_model');
+        $this->load->model('search_model');
         $this->load->library('MyAccess');
     }
 
@@ -44,7 +45,7 @@ class Forum extends CI_Controller {
                 $topicTitle = $this->topic_model->getData($lastReply_result->topic_id)->title;
                 //a reply could be submitted by either a registered user or a guest, verify which of the 2
                 if ($lastReply_result->user_id != 0) {
-                    $replyUsername = $this->login_model->getUserdata($lastReply_result->user_id)->username;
+                    $replyUsername = $this->search_model->getUserdata($lastReply_result->user_id)->username;
                 } else {
                     $replyUsername = 'Gast' . $lastReply_result->guest_id;
                 }
@@ -149,7 +150,6 @@ class Forum extends CI_Controller {
     public function insertTopic($error = NULL) {
         //get forum_id from method topics
         $forum_id = $this->session->flashdata('forum_id');
-        echo $forum_id;
         //check if user can create a topic
         $this->myaccess->insertTopic();
         //security measure to find url tampering when no argument is entered
@@ -229,7 +229,6 @@ class Forum extends CI_Controller {
         $this->load->library('MyCaptcha');
         //Call form validation-library
         $topic_id = $this->session->flashdata('topic_id');
-        echo $topic_id;
         //security measure to find url tampering when no argument is entered
         $libraryData = array('argument' => $topic_id);
         $this->myaccess->missingArguments($libraryData);

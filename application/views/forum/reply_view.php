@@ -16,7 +16,8 @@ References: none
             <td><?php
                 $edit = false;
                 if ($reply->username != NULL) {
-                    echo $reply->username;
+                    echo '<a href="' . base_url("profile/view/$reply->user_id") . '">' . $reply->username . '</a>';
+                    echo '<img class="avatar" src="' . base_url() . 'assets/images/avatars/' . $reply->avatar . '" alt="Avatar" width="150"/>'; 
                     if ($reply->user_id == $this->session->userdata('user_id')) {
                         $edit = true;
                     } else if ($this->session->userdata('level') >= 3) {

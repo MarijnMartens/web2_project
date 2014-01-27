@@ -20,7 +20,7 @@ if ($userdata->gender == 'm') {
 }
 $dateOfBirth = $userdata->dateOfBirth;
 $dateOfBirth2 = explode('-', $dateOfBirth);
-echo '<img class="avatar" src="' . base_url() . 'assets/images/avatars/' . $userdata->avatar . '" alt="Avatar"/><br/>'; 
+echo '<img class="avatar" src="' . base_url() . 'assets/images/avatars/' . $userdata->avatar . '" alt="Avatar" width="150"/><br/>'; 
 echo 'Voornaam ' . $userdata->fName . '<br/>';
 echo 'Achternaam ' . $userdata->lName . '<br/>';
 if ($dateOfBirth != '') {
