@@ -23,7 +23,7 @@ foreach($alphabet as $key => $letter){
         //print usernames for matching letter
         foreach($letter as $userData){
             echo '<tr>';
-            echo '<td><a href="' . base_url() . 'profile/view/' . $userData->id . '">'. $userData->username . '</a></td>';
+            echo '<td><a href="' . base_url() . 'profile/index/' . $userData->id . '">'. $userData->username . '</a></td>';
             echo '</tr>';
         }
     }

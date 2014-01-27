@@ -13,9 +13,23 @@ include_once 'basecontroller.php';
 class Profile extends BaseController {
 
     //view displays all information in a view-only format
-    public function index() {
-        $this->load->model('login_model');
-        $bodyData['userdata'] = $this->login_model->getUserdata($this->session->userdata('user_id'));
+    public function index($user_id = null) {
+        if ($user_id == null) {
+            //current user, get ALL userdata
+            $this->load->model('login_model');
+            $bodyData['userdata'] = $this->login_model->getUserdata($this->session->userdata('user_id'));
+        } else {
+            //page directed from other url than menu, check if user == profile request user
+            if ($user_id == $this->session->userdata('user_id')) {
+                $this->load->model('login_model');
+                $bodyData['userdata'] = $this->login_model->getUserdata($this->session->userdata('user_id'));
+            } else {
+                //other user, get LIMITED userdata
+                $this->load->model('search_model');
+                $bodyData['userdata'] = $this->search_model->getUserdata($user_id);
+            }
+        }
+
         //getUserData failed
         if (!$bodyData['userdata']) {
             $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
@@ -24,7 +38,7 @@ class Profile extends BaseController {
         //insert all userdata in flash
         $this->session->set_flashdata('userdata', $bodyData['userdata']);
         //Display profilepage
-        $bodyData['title'] = 'Profile';
+        $bodyData['title'] = 'Profieldetails';
         $bodyData['view'] = 'profile/profile_view';
         $this->load->view('template/tmpPage_view', $bodyData);
     }
@@ -155,7 +169,7 @@ class Profile extends BaseController {
                     $upload_data = $this->upload->data();
                     $file_name = $upload_data['file_name'];
                     //print_r($data);
-                } 
+                }
                 //no new avatar selected
             } else {
                 $file_name = null;
@@ -206,21 +220,24 @@ class Profile extends BaseController {
         $this->load->view('template/tmpPage_view', $bodyData);
     }
 
-    //function to see other users info
-    //like function index, kept apart for readability
-    public function view($user_id) {
-        $this->load->model('search_model');
-        $user = $this->search_model->getUserdata($user_id);
-        $bodyData['userdata'] = $user;
-        //getUserData failed
-        if (!$bodyData['userdata']) {
-            $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
-            redirect('welcome/message');
-        }
-        //Display profilepage
-        $bodyData['title'] = 'Profiel van ' . $user->username;
-        $bodyData['view'] = 'profile/member_view';
-        $this->load->view('template/tmpPage_view', $bodyData);
-    }
+    //DECAPRECATED
+    /*
+      //function to see other users info
+      //like function index, kept apart for readability
+      public function view($user_id) {
+      $this->load->model('search_model');
+      $user = $this->search_model->getUserdata($user_id);
+      $bodyData['userdata'] = $user;
+      //getUserData failed
+      if (!$bodyData['userdata']) {
+      $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
+      redirect('welcome/message');
+      }
+      //Display profilepage
+      $bodyData['title'] = 'Profiel van ' . $user->username;
+      $bodyData['view'] = 'profile/member_view';
+      $this->load->view('template/tmpPage_view', $bodyData);
+      }
 
+     */
 }

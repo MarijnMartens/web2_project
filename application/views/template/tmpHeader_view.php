@@ -28,15 +28,15 @@ if (!defined('BASEPATH'))
     <body>
         <header>
             <!-- Get logo -->
-            <a href="<?php echo base_url('welcome'); ?>"><img src="<?php echo base_url(); ?>assets/images/logo.png" alt="logo" height="100"/><a/>
-            <div id='login_menu'>
-                <ul id="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
+            <a href="<?php echo base_url('welcome'); ?>"><img src="<?php echo base_url(); ?>assets/images/logo.png" alt="logo" height="100"/></a>
+            <div class='login_menu'>
+                <ul class="login_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: hidden;"'; ?>>
                     <li><a href="<?php echo base_url('login'); ?>">Login</a></li>
                     <li><a href="<?php echo base_url('login/register'); ?>">Registreer</a></li>
                 </ul>
             </div><!-- End login-menu -->
-            <div id ='user_menu'><!-- Start user-menu -->
-                <ul id="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
+            <div class='user_menu'><!-- Start user-menu -->
+                <ul class="user_menu" <?php if ($this->session->userdata('validated') == TRUE) echo 'style="visibility: visible;"'; ?>>
                     <li><a href="<?php echo base_url('profile'); ?>">Profiel</a></li>
                     <li>messenger</li>
                     <li><a href="<?php echo base_url('profile/all'); ?>">Ledenlijst</a></li>
@@ -44,8 +44,8 @@ if (!defined('BASEPATH'))
                     <li><a href="<?php echo base_url('login/logout'); ?>">Logout</a></li>
                 </ul>
             </div><!-- End user-menu -->
-            <div id='menu'><!-- Start menu --> 
-                <ul id="menu">
+            <div class='menu'><!-- Start menu --> 
+                <ul class="menu">
                     <li><a href="<?php echo base_url('welcome'); ?>">Startpagina</a></li>
                     <li><a href="<?php echo base_url('forum'); ?>">Forum</a></li>
                     <li><a href="<?php echo base_url('event'); ?>">Evenementen</a></li>

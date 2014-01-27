@@ -12,7 +12,7 @@ header {
     background-color:yellow;
 }
 
-#user_menu {
+.user_menu {
     visibility: hidden;
 }
 
