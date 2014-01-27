@@ -27,7 +27,10 @@ class Welcome extends CI_Controller {
     }
 
     public function index() {
+        $this->load->model('homepage_model');
+        $result = $this->homepage_model->getAll();
         $bodyData['title'] = 'Index';
+        $bodyData['result'] = $result;
         $bodyData['view'] = 'index_view';
         $this->load->view('template/tmpPage_view', $bodyData);
     }

@@ -42,7 +42,11 @@ input {
     width: 200px;
 }
 
-.searchHeader{
+h1{
     background-color: #1c8017;
     color: white;
+}
+
+article{
+    background: aqua;
 }
