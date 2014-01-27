@@ -14,22 +14,15 @@ class Search extends CI_Controller {
         $this->load->model('search_model');
         $keyword = trim($this->input->post('search'));
         $result = $this->search_model->getAll($keyword);
-        if ($result) {
-            //iterate each database table in getAll
-            foreach ($result as $table) {
-                //check database table has result
-                if ($table) {
-                    //iterate rows in table
-                    foreach ($table as $row) {
-                        //iterate columns in table
-                        echo '<table border="1" width="200">';
-                        foreach ($row as $column) {
-                            echo "<tr><td>$column</td></tr>";
-                        }
-                        echo '</table></br>';
-                    }
-                }
-            }
+        //Empty arrays count as null
+        if (!(array_filter($result) == null)) {
+            $bodyData['result'] = $result;
+            $bodyData['title'] = 'Zoekresultaten';
+            $bodyData['view'] = 'search_view';
+            $this->load->view('template/tmpPage_view', $bodyData);
+        } else { //No results
+            $this->session->set_flashdata('message', 'Geen zoekresultaten');
+            redirect('welcome/message');
         }
     }
 

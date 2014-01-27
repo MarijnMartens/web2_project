@@ -48,7 +48,7 @@ class Search_model extends CI_Model {
 
     //search in table USER
     private function searchUser($keyword) {
-        $this->db->select('id, username, level, fName, lName, gender, dateOfBirth, city, avatar');
+        $this->db->select('username, id, level, fName, lName, gender, dateOfBirth, city, avatar');
         $array = array(
             'username' => $keyword,
             'fName' => $keyword,
@@ -68,7 +68,7 @@ class Search_model extends CI_Model {
 
     //search in table FORUM
     private function searchForum($keyword) {
-        $this->db->select('id, title, description, level');
+        $this->db->select('title, id, description, level');
         $array = array(
             'title' => $keyword,
             'description' => $keyword
@@ -102,7 +102,7 @@ class Search_model extends CI_Model {
 
     //search in table REPLY
     private function searchReply($keyword) {
-        $this->db->select('id, date, topic_id, user_id, message', 'guest_id');
+        $this->db->select('user_id, id, date, topic_id, message', 'guest_id');
         $array = array(
             'date' => $keyword,
             'guest_id' => 'Gast' . $keyword,
