@@ -50,3 +50,7 @@ h1{
 article{
     background: aqua;
 }
+//displays cursor 'hand' when hovering over title island to indicate toggle
+.toggle{
+    cursor: pointer;
+}

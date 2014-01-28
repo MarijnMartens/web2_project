@@ -19,6 +19,27 @@ $months = array(1 => 'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Ju
 for($i = date('Y')-16; $i >= date('Y')-70; $i--){
             $years[$i] = $i;
 }
+echo form_open('profile/saveSecure');
+echo form_label('Email', 'email');
+echo form_input($userdata['email']);
+echo '<br/>';
+echo form_label('Herhaal Email', 'emailConf');
+echo form_input($userdata['emailConf']);
+echo '<br/>';
+echo form_label('Nieuw wachtwoord', 'password');
+echo form_password($userdata['password']);
+echo '<br/>';
+echo form_label('Herhaal nieuw wachtwoord', 'passwordConf');
+echo form_password($userdata['passwordConf']);
+echo '<br/>';
+echo form_label('Oud wachtwoord', 'passwordOld');
+echo form_password($userdata['passwordOld']);
+echo '<br/>';
+echo form_submit('submit', 'Wijzig inloggegevens');
+echo form_close();
+
+echo '<br/><br/>';
+
 echo form_open_multipart('profile/save');
 echo form_label('Avatar', 'userfile');
 echo form_upload($userdata['avatar']);

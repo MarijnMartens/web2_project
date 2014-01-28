@@ -10,7 +10,7 @@ if (!defined('BASEPATH'))
 
 <?php 
 //Load custom view, done this way to display a view within this template view
-//This way I can create multiple 'island', need for ie the homepage
+//This way I can create multiple 'islands', need for ie the homepage
 $this->load->view('template/tmpHeader_view');
 ?>
 
@@ -21,18 +21,18 @@ if(!(isset($aside_visible))){
     $aside_display = 'style="display: none;"';
 }
 ?>
-<!-- Hide / Show section -->
+<!-- Hide / Show article -->
 <script>
     $(document).ready(function()
     {
         var toggle = true;
         var txt = '';
-        $("article id='toggle'").click(function()
+        $('.toggle').click(function()
         {
             txt = $(this).text();
+            //Hide / show next element
             $(this).next().slideToggle("slow");
             if (toggle == true) {
-
                 $(this).text(txt.replace('▲', '▼'));
                 toggle = false;
             } else {

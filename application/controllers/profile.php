@@ -43,7 +43,7 @@ class Profile extends BaseController {
         $this->load->view('template/tmpPage_view', $bodyData);
     }
 
-    //edit non-critical user information
+    //edit user information
     public function edit($error = NULL) {
         //get all data from index 
         $userdata = $this->session->flashdata('userdata');
@@ -91,6 +91,27 @@ class Profile extends BaseController {
             'name' => 'userfile',
             'id' => 'userfile'
         );
+        $email = array(
+            'name' => 'email',
+            'id' => 'email',
+            'value' => $userdata->email
+        );
+        $emailConf = array(
+            'name' => 'emailConf',
+            'id' => 'emailConf',
+        );
+        $password = array(
+            'name' => 'password',
+            'id' => 'password',
+        );
+        $passwordConf = array(
+            'name' => 'passwordConf',
+            'id' => 'passwordConf'
+        );
+        $passwordOld = array(
+            'name' => 'passwordOld',
+            'id' => 'passwordOld'
+        );
 
         $bodyData['title'] = 'Edit profile';
         $bodyData['error'] = $error;
@@ -101,7 +122,12 @@ class Profile extends BaseController {
             'genderM' => $genderM,
             'genderF' => $genderF,
             'city' => $city,
-            'avatar' => $avatar
+            'avatar' => $avatar,
+            'email' => $email,
+            'emailConf' => $emailConf,
+            'password' => $password,
+            'passwordConf' => $passwordConf,
+            'passwordOld' => $passwordOld
         );
         $bodyData['view'] = 'profile/edit_view';
         $this->load->view('template/tmpPage_view', $bodyData);
@@ -127,6 +153,11 @@ class Profile extends BaseController {
                 'fName', 'Voornaam', 'min_length[2]|'
                 . 'max_length[20]|'
         );
+        $this->form_validation->set_rules(
+                'email', 'Email adres', 'required|'
+                . 'valid_email|'
+                . 'is_unique[user.email]'
+        );
 
         //Validation form
         if ($this->form_validation->run() == FALSE) {
@@ -139,6 +170,7 @@ class Profile extends BaseController {
             $year = $this->input->post('year');
             $gender = $this->input->post('gender');
             $city = $this->input->post('city');
+            $email = $this->input->post('email');
             $dateOfBirth = array($year, $month, $day);
             $dateOfBirth = implode('-', $dateOfBirth);
             //upload avatar
@@ -160,7 +192,8 @@ class Profile extends BaseController {
                         'lName' => $lName,
                         'gender' => $gender,
                         'city' => $city,
-                        'dateOfBirth' => $dateOfBirth
+                        'dateOfBirth' => $dateOfBirth,
+                        'email' => $email
                     );
                     $this->session->set_flashdata('userdata', $userdata);
 
@@ -178,7 +211,7 @@ class Profile extends BaseController {
             //process changes
             $this->load->model('register_model');
             $result = $this->register_model->editProfile(
-                    $this->session->userdata('user_id'), $fName, $lName, $dateOfBirth, $gender, $city, $file_name
+                    $this->session->userdata('user_id'), $fName, $lName, $dateOfBirth, $gender, $city, $file_name, $email
             );
 
             //check update database
@@ -190,6 +223,60 @@ class Profile extends BaseController {
             } else {
                 //display profile after edit
                 redirect('profile');
+            }
+        }
+    }
+
+    //save non-critical user information
+    public function saveSecure() {
+        //get all fields, xss filter
+        $this->input->post(NULL, TRUE);
+        //format errors
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<span class="error">', '</span>');
+        //Input field validation
+        $this->form_validation->set_rules(
+                'password', 'Paswoord', 'min_length[3]|' . 'matches[passConf]'
+        );
+        $this->form_validation->set_rules(
+                'passConf', 'Herhaling paswoord'
+        );
+        $this->form_validation->set_rules(
+                'email', 'Email adres', 'valid_email|'
+                . 'matches[emailConf]'
+        );
+        $this->form_validation->set_rules(
+                'emailConf', 'Email adres'
+        );
+        $this->form_validation->set_rules(
+                'passwordOld', 'Huidig paswoord', 'required'
+        );
+
+        //Validation form
+        if ($this->form_validation->run() == FALSE) {
+            $this->edit();
+        } else {
+            $email = $this->input->post('email');
+            $emailConf = $this->input->post('emailConf');
+            $password = $this->input->post('password');
+            $passwordConf = $this->input->post('passwordConf');
+            $passwordOld = $this->input->post('passwordOld');
+            //load model
+            $this->load->model('register_model');
+            //Check if email has changed
+            if ($email != $this->session->userdata('email')) {
+                //Check if both email fields are filled
+                if ($email == $emailConf) {
+                    $result = $this->register_model->editProfileSecure(
+                            $this->session->userdata('user_id'), $passwordOld, $email);
+                    //check update database
+                    if (!$result) { //Model did not insert data in database
+                        $error = 'Invoer in database is mislukt';
+                        //$this->edit($error);
+                        $this->session->set_flashdata('message', $error);
+                        redirect('welcome/message');
+                    }
+                }
             }
         }
     }
@@ -219,25 +306,4 @@ class Profile extends BaseController {
         $bodyData['view'] = 'users_view';
         $this->load->view('template/tmpPage_view', $bodyData);
     }
-
-    //DECAPRECATED
-    /*
-      //function to see other users info
-      //like function index, kept apart for readability
-      public function view($user_id) {
-      $this->load->model('search_model');
-      $user = $this->search_model->getUserdata($user_id);
-      $bodyData['userdata'] = $user;
-      //getUserData failed
-      if (!$bodyData['userdata']) {
-      $this->session->set_flashdata('message', 'Userdata kon niet opgehaald worden');
-      redirect('welcome/message');
-      }
-      //Display profilepage
-      $bodyData['title'] = 'Profiel van ' . $user->username;
-      $bodyData['view'] = 'profile/member_view';
-      $this->load->view('template/tmpPage_view', $bodyData);
-      }
-
-     */
 }
