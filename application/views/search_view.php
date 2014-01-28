@@ -39,8 +39,14 @@ for ($i = 0; $i < count($result); $i++) {
         $fields = $table->list_fields();
         echo '<tr>';
         //iterate fieldnames as tableheader
-        foreach ($fields as $field) {
-            echo "<th>$field</th>";
+        for ($k = 0; $k < count($fields); $k++) {
+            //echo "<th>$field</th>";
+            switch($fields[$k]){
+                case 'id':
+                    break;
+                default:
+                    echo "<th>$fields[$k]</th>";
+            }
         }
         echo '</tr>';
         //get data table
@@ -49,8 +55,21 @@ for ($i = 0; $i < count($result); $i++) {
         foreach ($values as $row) {
             //iterate columns in table
             echo '<tr>';
-            foreach ($row as $column) {
-                echo "<td>$column</td>";
+            for ($j = 0; $j < count($fields); $j++) {
+                //For specified action at certan fields search 
+                //for match in switch else normal print
+                switch($fields[$j]){
+                    case 'avatar':
+                        echo '<td><img class="avatar" src="' . base_url() . 'assets/images/avatars/' . $row->$fields[$j] . '" alt="Avatar" width="150"/></td>';
+                        break;
+                    case 'id':
+                        $id = $row->$fields[$j];
+                        break;
+                    case 'username':
+                        echo '<td><a href="' . base_url() . 'profile/index/' . $id . '">' . $row->$fields[$j] . '</a></td>';
+                    default:
+                        echo '<td>' . $row->$fields[$j] . '</td>';
+                }
             }
             echo '</tr>';
         }

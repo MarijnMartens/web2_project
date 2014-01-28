@@ -48,7 +48,7 @@ class Search_model extends CI_Model {
 
     //search in table USER
     private function searchUser($keyword) {
-        $this->db->select('username, id, level, fName, lName, gender, dateOfBirth, city, avatar');
+        $this->db->select('id, username, level, fName, lName, gender, dateOfBirth, city, avatar');
         $array = array(
             'username' => $keyword,
             'fName' => $keyword,
@@ -102,14 +102,16 @@ class Search_model extends CI_Model {
 
     //search in table REPLY
     private function searchReply($keyword) {
-        $this->db->select('user_id, id, date, topic_id, message', 'guest_id');
+        $this->db->select('reply.user_id, reply.id, reply.date, reply.topic_id, reply.message, reply.guest_id, user.username');
         $array = array(
             'date' => $keyword,
             'guest_id' => 'Gast' . $keyword,
             'message' => $keyword
         );
+        $this->db->from('reply');
+        $this->db->join('user', 'reply.user_id = user.id', 'left');
         $this->db->or_like($array);
-        $query = $this->db->get('reply');
+        $query = $this->db->get();
         // Let's check if there are any results
         if ($query->num_rows() >= 1) {
             return $query; //->result();
