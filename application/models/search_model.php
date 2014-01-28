@@ -60,7 +60,7 @@ class Search_model extends CI_Model {
         $query = $this->db->get('user');
         // Let's check if there are any results
         if ($query->num_rows() >= 1) {
-            return $query->result();
+            return $query; //->result();
         } else {
             return false;
         }
@@ -77,7 +77,7 @@ class Search_model extends CI_Model {
         $query = $this->db->get('forum');
         // Let's check if there are any results
         if ($query->num_rows() >= 1) {
-            return $query->result();
+            return $query; //->result();
         } else {
             return false;
         }
@@ -94,7 +94,7 @@ class Search_model extends CI_Model {
         $query = $this->db->get('topic');
         // Let's check if there are any results
         if ($query->num_rows() >= 1) {
-            return $query->result();
+            return $query; //->result();
         } else {
             return false;
         }
@@ -112,7 +112,7 @@ class Search_model extends CI_Model {
         $query = $this->db->get('reply');
         // Let's check if there are any results
         if ($query->num_rows() >= 1) {
-            return $query->result();
+            return $query; //->result();
         } else {
             return false;
         }

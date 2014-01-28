@@ -33,15 +33,28 @@ for ($i = 0; $i < count($result); $i++) {
         }
         echo '</h1>';
 
-        //iterate rows in table
-        foreach ($table as $row) {
-            echo '<table border="2" width="100%">';
-            //iterate columns in table
-            foreach ($row as $column) {
-                echo "<tr><td>$column</td></tr>";
-            }
-            echo '</table></br>';
+        echo '<table border="2" width="100%">';
+
+        //get fieldnames table
+        $fields = $table->list_fields();
+        echo '<tr>';
+        //iterate fieldnames as tableheader
+        foreach ($fields as $field) {
+            echo "<th>$field</th>";
         }
+        echo '</tr>';
+        //get data table
+        $values = $table->result();
+        //iterate rows in table
+        foreach ($values as $row) {
+            //iterate columns in table
+            echo '<tr>';
+            foreach ($row as $column) {
+                echo "<td>$column</td>";
+            }
+            echo '</tr>';
+        }
+        echo '</table></br>';
     }
 }
 ?>
