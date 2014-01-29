@@ -39,16 +39,16 @@ class Search_model extends CI_Model {
     public function getAll($keyword) {
         //search in tables
         $result[0] = $this->searchUser($keyword);
-        $result[1] = $this->searchForum($keyword);
-        $result[2] = $this->searchTopic($keyword);
-        $result[3] = $this->searchReply($keyword);
+        //$result[1] = $this->searchForum($keyword);
+        $result[1] = $this->searchTopic($keyword);
+        $result[2] = $this->searchReply($keyword);
 
         return $result;
     }
 
     //search in table USER
     private function searchUser($keyword) {
-        $this->db->select('id, username, level, fName, lName, gender, dateOfBirth, city, avatar');
+        $this->db->select('id as user_id, username, avatar');
         $array = array(
             'username' => $keyword,
             'fName' => $keyword,
@@ -68,7 +68,7 @@ class Search_model extends CI_Model {
 
     //search in table FORUM
     private function searchForum($keyword) {
-        $this->db->select('title, id, description, level');
+        $this->db->select('id as forum_id, title as forum_title, description, level');
         $array = array(
             'title' => $keyword,
             'description' => $keyword
@@ -85,7 +85,7 @@ class Search_model extends CI_Model {
 
     //search in table TOPIC
     private function searchTopic($keyword) {
-        $this->db->select('id, forum_id, user_id, title, date');
+        $this->db->select('id as topic_id, forum_id, user_id, title as topic_title, date');
         $array = array(
             'title' => $keyword,
             'date' => $keyword
@@ -102,14 +102,15 @@ class Search_model extends CI_Model {
 
     //search in table REPLY
     private function searchReply($keyword) {
-        $this->db->select('reply.user_id, reply.id, reply.date, reply.topic_id, reply.message, reply.guest_id, user.username');
+        $this->db->select('reply.id as reply_id, reply.date, reply.topic_id, topic.title as topic_title, reply.user_id, reply.guest_id, user.username, reply.message');
         $array = array(
-            'date' => $keyword,
+            'reply.date' => $keyword,
             'guest_id' => 'Gast' . $keyword,
             'message' => $keyword
         );
         $this->db->from('reply');
         $this->db->join('user', 'reply.user_id = user.id', 'left');
+        $this->db->join('topic', 'reply.topic_id = topic.id');
         $this->db->or_like($array);
         $query = $this->db->get();
         // Let's check if there are any results

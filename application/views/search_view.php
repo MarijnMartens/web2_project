@@ -20,16 +20,22 @@ for ($i = 0; $i < count($result); $i++) {
             case 0:
                 echo 'Gebruikers:';
                 break;
-            case 1:
+            /*case 1:
                 echo 'Fora:';
-                break;
-            case 2:
+                break;*/
+            case 1:
                 echo 'Topic titels:';
                 break;
-            case 3:
+            case 2:
                 echo 'Antwoorden in topics:';
                 break;
-                echo '</h3></td></tr>';
+            case 3:
+                echo 'Evenementen:';
+                break;
+            case 4:
+                echo 'In media:';
+                break;
+                
         }
         echo '</h1>';
 
@@ -41,11 +47,31 @@ for ($i = 0; $i < count($result); $i++) {
         //iterate fieldnames as tableheader
         for ($k = 0; $k < count($fields); $k++) {
             //echo "<th>$field</th>";
-            switch($fields[$k]){
-                case 'id':
+            switch ($fields[$k]) {
+                case 'user_id':
+                case 'forum_id':
+                case 'topic_id':
+                case 'reply_id':
+                case 'guest_id':
                     break;
+                //Translate databasefields
+                case 'username':
+                    echo '<th>Gebruikersnaam</th>';
+                    break;
+                case 'topic_title':
+                    echo '<th>Naam topic</th>';
+                    break;
+                case 'date':
+                    echo '<th>Datum</th>';
+                    break;
+                case 'message':
+                    echo '<th>Preview bericht</th>';
+                    break;
+                
+                //In case all previous failed, should not be called 
+                //(unless no different translation)
                 default:
-                    echo "<th>$fields[$k]</th>";
+                    echo '<th>'. ucfirst($fields[$k]) . '</th>';
             }
         }
         echo '</tr>';
@@ -58,15 +84,37 @@ for ($i = 0; $i < count($result); $i++) {
             for ($j = 0; $j < count($fields); $j++) {
                 //For specified action at certan fields search 
                 //for match in switch else normal print
-                switch($fields[$j]){
+                switch ($fields[$j]) {
                     case 'avatar':
                         echo '<td><img class="avatar" src="' . base_url() . 'assets/images/avatars/' . $row->$fields[$j] . '" alt="Avatar" width="150"/></td>';
                         break;
-                    case 'id':
-                        $id = $row->$fields[$j];
+                    case 'user_id':
+                        $user_id = $row->$fields[$j];
+                        break;
+                    case 'guest_id':
+                        $user_id = $row->$fields[$j];
+                        break;
+                    case 'forum_id':
+                        $forum_id = $row->$fields[$j];
+                        break;
+                    case 'topic_id':
+                        $topic_id = $row->$fields[$j];
+                        break;
+                    case 'reply_id':
+                        $reply_id = $row->$fields[$j];
                         break;
                     case 'username':
-                        echo '<td><a href="' . base_url() . 'profile/index/' . $id . '">' . $row->$fields[$j] . '</a></td>';
+                        echo '<td><a href="' . base_url() . 'profile/index/' . $user_id . '">' . $row->$fields[$j] . '</a></td>';
+                        break;
+                    case 'forum_title':
+                        echo '<td><a href="' . base_url() . 'forum/topics/' . $forum_id . '">' . $row->$fields[$j] . '</a></td>';
+                        break;
+                    case 'topic_title':
+                        echo '<td><a href="' . base_url() . 'forum/replies/' . $topic_id . '">' . $row->$fields[$j] . '</a></td>';
+                        break;
+                    case 'message':
+                        echo '<td>' . $row->$fields[$j] . '</td>'; //Need to shorten this, only show i.e. 160 characters, maybe anchorlink this
+                        break;
                     default:
                         echo '<td>' . $row->$fields[$j] . '</td>';
                 }

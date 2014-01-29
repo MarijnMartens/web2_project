@@ -11,6 +11,8 @@ class Test extends CI_Controller {
          $bodyData['title'] = 'Zoekresultaten';
          $bodyData['view'] = 'test_view';
          $this->load->view('template/tmpPage_view', $bodyData);
+         
+         
         
     }
 
