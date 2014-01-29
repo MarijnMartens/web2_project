@@ -8,10 +8,6 @@
 
 class Register_model extends CI_Model {
 
-    function __construct() {
-        parent::__construct();
-    }
-
     function setUsers($username, $password, $email) {
         //encrypting crypt, auto salt met cost
         $option = ['cost' => 12];
