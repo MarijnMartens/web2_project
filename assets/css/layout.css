@@ -2,14 +2,14 @@
     Created on : Dec 13, 2013, 4:18:17 PM
     Author     : Marijn
 */
-//display of avatar
+/*display of avatar*/
 img.avatar {
     max-height: 250px;
     width: 150px;
 }
 
 header {
-    background-color:yellow;
+    background-color:green;
 }
 
 .user_menu {
@@ -35,8 +35,8 @@ input {
     font-family: sans-serif; 
 }
 
-//vaste hoogte en breedte omdat de timeline langer duurt om in te laden, 
-//hiermee voorkomen we dat de pagina verschuift als de timeline klaar is
+/*vaste hoogte en breedte omdat de timeline langer duurt om in te laden,
+//hiermee voorkomen we dat de pagina verschuift als de timeline klaar is*/
 #twitter-timeline {
     height: 500px;
     width: 200px;
@@ -50,7 +50,7 @@ h1{
 article{
     background: aqua;
 }
-//displays cursor 'hand' when hovering over title island to indicate toggle
+/*displays cursor 'hand' when hovering over title island to indicate toggle*/
 .toggle{
     cursor: pointer;
 }
